@@ -1,24 +1,28 @@
 'use strict';
 
-var announcementParams = {
-  AUTHORS: [
-    'img/avatars/user01.png',
-    'img/avatars/user02.png',
-    'img/avatars/user03.png',
-    'img/avatars/user04.png',
-    'img/avatars/user05.png',
-    'img/avatars/user06.png',
-    'img/avatars/user07.png',
-    'img/avatars/user08.png'
-  ],
-  TYPES: ['palace', 'flat', 'house', 'bungalo'],
-  PINS_QUANTITY: 8
+var ADS_AMOUNT = 8;
+
+var yCord = {
+  MIN: 130,
+  MAX: 630
 };
 
-var quantityOfPins = announcementParams.PINS_QUANTITY;
+var offerParams = {
+  TYPES: ['palace', 'flat', 'house', 'bungalo'],
+};
 
-// максимальное значение координаты Y поля, где будут располагаться все метки
-var searchAreaHeight = document.querySelector('.map__pins').clientHeight;
+var getAuthors = function () {
+  var AUTHORS = [];
+  for (var i = 1; i < ADS_AMOUNT + 1; i++) {
+    AUTHORS[i - 1] = 'img/avatars/user0' + i + '.png';
+    if (i >= 10) {
+      AUTHORS[i - 1] = 'img/avatars/user' + i + '.png';
+    }
+  }
+  return AUTHORS;
+};
+
+var AUTHORS = getAuthors();
 
 // максимальное значение координаты X поля, где будут располагаться все метки
 var searchAreaWidth = document.querySelector('.map__pins').clientWidth;
@@ -27,69 +31,70 @@ var searchAreaWidth = document.querySelector('.map__pins').clientWidth;
 var map = document.querySelector('.map');
 map.classList.remove('map--faded');
 
+// находим шаблон меток в template
 var similarPinTemplate = document.querySelector('#pin')
     .content
     .querySelector('.map__pin');
 
 var similarPins = document.querySelector('.map__pins');
 
-// функция для получения рандомных координат с карты
-var getRandomCoordinate = function (min, max) {
+// функция для получения рандомного числа
+var getRandomNumber = function (min, max) {
   return Math.floor(Math.random() * (max - min) + min);
 };
 
-// функция для получения рандомного индекса массива
+// функция для получения рандомного элемента массива
 var getRandomElement = function (array) {
   var index = Math.floor(Math.random() * array.length);
   return array[index];
 };
 
-// функция создания метки объявления
-var getPin = function () {
-  var pin = {
+// функция создания объявления
+var getAd = function () {
+  var ad = {
     author: {
-      avatar: getRandomElement(announcementParams.AUTHORS)
+      avatar: getRandomElement(AUTHORS)
     },
     offer: {
-      type: getRandomElement(announcementParams.TYPES)
+      type: getRandomElement(offerParams.TYPES)
     },
     location: {
-      x: getRandomCoordinate(0, searchAreaWidth),
-      y: getRandomCoordinate(0, searchAreaHeight)
+      x: getRandomNumber(similarPinTemplate.clientWidth, searchAreaWidth - similarPinTemplate.clientWidth),
+      y: getRandomNumber(yCord.MIN, yCord.MAX)
     }
   };
-  return pin;
+  return ad;
 };
 
 // функция создания массива с метками
-var generatePins = function () {
-  var pins = [];
-  for (var i = 0; i < quantityOfPins; i++) {
-    pins.push(getPin());
+var generateAds = function (amount) {
+  var ads = [];
+  for (var i = 0; i < amount; i++) {
+    ads.push(getAd());
   }
-  return pins;
+  return ads;
 };
 
-var pins = generatePins(quantityOfPins);
+var ads = generateAds(ADS_AMOUNT);
 
 // функция вставки шаблона
-var renderPin = function () {
+var renderPin = function (ad) {
   var pinElement = similarPinTemplate.cloneNode(true);
-  pinElement.style.left = location.x - pinElement.clientWidth + 'px';
-  pinElement.style.top = location.y - pinElement.clientHeight + 'px';
-  pinElement.querySelector('img').src = getPin().author.avatar;
-  pinElement.querySelector('img').alt = getPin().author.offer;
+  pinElement.style.left = ad.location.x - pinElement.clientWidth + 'px';
+  pinElement.style.top = ad.location.y - pinElement.clientHeight + 'px';
+  pinElement.querySelector('img').src = ad.author.avatar;
+  pinElement.querySelector('img').alt = ad.author.offer;
 
   return pinElement;
 };
 
 // функция создания фрагмента
-var creatFragment = function () {
+var creatFragment = function (amount) {
   var fragment = document.createDocumentFragment();
-  for (var i = 0; i < pins.length; i++) {
-    fragment.appendChild(renderPin(pins[i]));
+  for (var i = 0; i < amount.length; i++) {
+    fragment.appendChild(renderPin(ads[i]));
   }
   return fragment;
 };
 
-similarPins.appendChild(creatFragment());
+similarPins.appendChild(creatFragment(ads));
