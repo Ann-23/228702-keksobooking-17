@@ -7,22 +7,30 @@ var yCord = {
   MAX: 630
 };
 
+var pinParams = {
+  WIDTH: 50,
+  HEIGHT: 70
+};
+
 var offerParams = {
+  TITLE: ['Большая уютная квартира',
+    'Маленькая неуютная квартира',
+    'Огромный прекрасный дворец',
+    'Маленький ужасный дворец',
+    'Красивый гостевой домик',
+    'Некрасивый негостеприимный домик',
+    'Уютное бунгало далеко от моря',
+    'Неуютное бунгало по колено в воде'],
   TYPES: ['palace', 'flat', 'house', 'bungalo'],
 };
 
-var getAuthors = function () {
-  var AUTHORS = [];
-  for (var i = 1; i < ADS_AMOUNT + 1; i++) {
-    AUTHORS[i - 1] = 'img/avatars/user0' + i + '.png';
-    if (i >= 10) {
-      AUTHORS[i - 1] = 'img/avatars/user' + i + '.png';
-    }
+var getAvatarImg = function (index) {
+  var avatarIndex = index;
+  if (index < 10) {
+    avatarIndex = '0' + index;
   }
-  return AUTHORS;
+  return 'img/avatars/user' + avatarIndex + '.png';
 };
-
-var AUTHORS = getAuthors();
 
 // максимальное значение координаты X поля, где будут располагаться все метки
 var searchAreaWidth = document.querySelector('.map__pins').clientWidth;
@@ -43,23 +51,17 @@ var getRandomNumber = function (min, max) {
   return Math.floor(Math.random() * (max - min) + min);
 };
 
-// функция для получения рандомного элемента массива
-var getRandomElement = function (array) {
-  var index = Math.floor(Math.random() * array.length);
-  return array[index];
-};
-
 // функция создания объявления
-var getAd = function () {
+var getAd = function (index) {
   var ad = {
     author: {
-      avatar: getRandomElement(AUTHORS)
+      avatar: getAvatarImg(index)
     },
     offer: {
-      type: getRandomElement(offerParams.TYPES)
+      type: offerParams.TYPES[getRandomNumber(0, offerParams.TYPES.length)]
     },
     location: {
-      x: getRandomNumber(similarPinTemplate.clientWidth, searchAreaWidth - similarPinTemplate.clientWidth),
+      x: getRandomNumber(pinParams.WIDTH / 2, searchAreaWidth - pinParams.WIDTH / 2),
       y: getRandomNumber(yCord.MIN, yCord.MAX)
     }
   };
@@ -70,7 +72,7 @@ var getAd = function () {
 var generateAds = function (amount) {
   var ads = [];
   for (var i = 0; i < amount; i++) {
-    ads.push(getAd());
+    ads.push(getAd(i + 1));
   }
   return ads;
 };
@@ -80,8 +82,8 @@ var ads = generateAds(ADS_AMOUNT);
 // функция вставки шаблона
 var renderPin = function (ad) {
   var pinElement = similarPinTemplate.cloneNode(true);
-  pinElement.style.left = ad.location.x - pinElement.clientWidth + 'px';
-  pinElement.style.top = ad.location.y - pinElement.clientHeight + 'px';
+  pinElement.style.left = ad.location.x - pinParams.WIDTH / 2 + 'px';
+  pinElement.style.top = ad.location.y + 'px';
   pinElement.querySelector('img').src = ad.author.avatar;
   pinElement.querySelector('img').alt = ad.author.offer;
 
