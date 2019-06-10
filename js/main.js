@@ -62,7 +62,7 @@ var getAd = function (index) {
     },
     location: {
       x: getRandomNumber(pinParams.WIDTH / 2, searchAreaWidth - pinParams.WIDTH / 2),
-      y: getRandomNumber(yCord.MIN, yCord.MAX)
+      y: getRandomNumber(yCord.MIN, yCord.MAX - pinParams.HEIGHT)
     }
   };
   return ad;
@@ -83,7 +83,7 @@ var ads = generateAds(ADS_AMOUNT);
 var renderPin = function (ad) {
   var pinElement = similarPinTemplate.cloneNode(true);
   pinElement.style.left = ad.location.x - pinParams.WIDTH / 2 + 'px';
-  pinElement.style.top = ad.location.y + 'px';
+  pinElement.style.top = ad.location.y + pinParams.HEIGHT + 'px';
   pinElement.querySelector('img').src = ad.author.avatar;
   pinElement.querySelector('img').alt = ad.author.offer;
 
@@ -91,12 +91,12 @@ var renderPin = function (ad) {
 };
 
 // функция создания фрагмента
-var creatFragment = function (amount) {
+var createFragment = function () {
   var fragment = document.createDocumentFragment();
-  for (var i = 0; i < amount.length; i++) {
+  for (var i = 0; i < ads.length; i++) {
     fragment.appendChild(renderPin(ads[i]));
   }
   return fragment;
 };
 
-similarPins.appendChild(creatFragment(ads));
+similarPins.appendChild(createFragment());
