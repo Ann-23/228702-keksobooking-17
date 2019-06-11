@@ -33,7 +33,7 @@ var getAvatarImg = function (index) {
 };
 
 // максимальное значение координаты X поля, где будут располагаться все метки
-var searchAreaWidth = document.querySelector('.map__pins').clientWidth;
+var searchAreaWidth = document.querySelector('.map').clientWidth;
 
 // находим карту
 var map = document.querySelector('.map');
@@ -62,7 +62,7 @@ var getAd = function (index) {
     },
     location: {
       x: getRandomNumber(pinParams.WIDTH / 2, searchAreaWidth - pinParams.WIDTH / 2),
-      y: getRandomNumber(yCord.MIN, yCord.MAX - pinParams.HEIGHT)
+      y: getRandomNumber(yCord.MIN, yCord.MAX)
     }
   };
   return ad;
@@ -83,7 +83,7 @@ var ads = generateAds(ADS_AMOUNT);
 var renderPin = function (ad) {
   var pinElement = similarPinTemplate.cloneNode(true);
   pinElement.style.left = ad.location.x - pinParams.WIDTH / 2 + 'px';
-  pinElement.style.top = ad.location.y + pinParams.HEIGHT + 'px';
+  pinElement.style.top = ad.location.y - pinParams.HEIGHT + 'px';
   pinElement.querySelector('img').src = ad.author.avatar;
   pinElement.querySelector('img').alt = ad.author.offer;
 
