@@ -62,6 +62,11 @@ var similarPinTemplate = document.querySelector('#pin')
 
 var similarPins = document.querySelector('.map__pins');
 
+// находим шаблон карточки объявления в template
+var similarCardTemplate = document.querySelector('#card')
+    .content
+    .querySelector('.map__card');
+
 // функция для получения рандомного числа
 var getRandomNumber = function (min, max) {
   return Math.floor(Math.random() * (max - min) + min);
@@ -142,6 +147,25 @@ var renderPin = function (ad) {
   return pinElement;
 };
 
+var renderCard = function (ad) {
+  var cardElement = similarCardTemplate.cloneNode(true);
+  cardElement.querySelector('.popup__avatar').src = ad.author.avatar;
+  var cardTitle = cardElement.querySelector('.popup__title');
+  cardTitle.textContent = ad.offer.title;
+  var cardAddress = cardElement.querySelector('.popup__text--address');
+  cardAddress.textContent = ad.offer.address;
+  var cardPrice = cardElement.querySelector('.popup__text--price');
+  cardPrice.textContent = ad.offer.price + '₽/ночь';
+  var cardType = cardElement.querySelector('.popup__type');
+  cardType.textContent = ad.offer.type;
+  var cardGuest = cardElement.querySelector('.popup__text--capacity');
+  cardGuest.textContent = ad.offer.rooms + 'комнаты для ' + ad.offer.guests;
+  var cardTime = cardElement.querySelector('.popup__text--time');
+  cardTime .textContent = 'Заезд после ' + ad.offer.checkin + ', выезд до ' + ad.offer.checkout;
+  var cardDescription = cardElement.querySelector('.popup__description');
+  cardDescription.textContent = ad.offer.description;
+};
+
 // функция создания фрагмента
 var createFragment = function () {
   var fragment = document.createDocumentFragment();
@@ -152,3 +176,17 @@ var createFragment = function () {
 };
 
 similarPins.appendChild(createFragment());
+
+var createCard = function () {
+  var fragment = document.createDocumentFragment();
+  for (var i = 0; i < ads.length; i++) {
+    var referenceElement = document.querySelector('.map__filters-container');
+    var newElement = renderCard(ads[i]);
+    fragment.insertBefore(renderCard(newElement), referenceElement);
+  }
+  return fragment;
+};
+
+map.appendChild(createCard());
+
+
