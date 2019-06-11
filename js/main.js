@@ -24,13 +24,29 @@ var offerParams = {
   TYPES: ['palace', 'flat', 'house', 'bungalo'],
 };
 
-var getAvatarImg = function (index) {
-  var avatarIndex = index;
-  if (index < 10) {
-    avatarIndex = '0' + index;
-  }
-  return 'img/avatars/user' + avatarIndex + '.png';
-};
+var price = {
+  MIN: 1000,
+  MAX: 1000000
+}
+
+var rooms = {
+  MIN: 1,
+  MAX: 5
+}
+
+var guests = {
+  MIN: 1,
+  MAX: 6
+}
+
+var time = ['12:00', '13:00', '14:00'];
+
+var FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
+
+var PHOTOS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg',
+  'http://o0.github.io/assets/images/tokyo/hotel2.jpg',
+  'http://o0.github.io/assets/images/tokyo/hotel3.jpg'
+];
 
 // максимальное значение координаты X поля, где будут располагаться все метки
 var searchAreaWidth = document.querySelector('.map').clientWidth;
@@ -44,12 +60,41 @@ var similarPinTemplate = document.querySelector('#pin')
     .content
     .querySelector('.map__pin');
 
+// находим шаблон карточки объявления в template
+var similarCardTemplate = document.querySelector('#card').content;
+
 var similarPins = document.querySelector('.map__pins');
 
 // функция для получения рандомного числа
 var getRandomNumber = function (min, max) {
   return Math.floor(Math.random() * (max - min) + min);
 };
+
+var getAvatarImg = function (index) {
+  var avatarIndex = index;
+  if (index < 10) {
+    avatarIndex = '0' + index;
+  }
+  return 'img/avatars/user' + avatarIndex + '.png';
+};
+
+var getRandomFeatures = function () {
+  var featuresAmount = [],
+  amount = getRandomNumber(1, FEATURES.length);
+  for (var i = 0; i < amount; i++) {
+    featuresAmount.push(FEATURES[i]);
+  }
+  return featuresAmount;
+};
+
+var compareRandom = function (a, b) {
+  return Math.random() - 0.5;
+}
+
+var getSortPhotos = function () {
+  PHOTOS.sort(compareRandom);
+  return PHOTOS;
+}
 
 // функция создания объявления
 var getAd = function (index) {
@@ -58,7 +103,17 @@ var getAd = function (index) {
       avatar: getAvatarImg(index)
     },
     offer: {
-      type: offerParams.TYPES[getRandomNumber(0, offerParams.TYPES.length)]
+      title: offerParams.TITLE[index - 1],
+      address: [getRandomNumber(pinParams.WIDTH / 2, searchAreaWidth - pinParams.WIDTH / 2), getRandomNumber(yCord.MIN, yCord.MAX)],
+      price: getRandomNumber(price.MIN, price.MAX),
+      type: offerParams.TYPES[getRandomNumber(0, offerParams.TYPES.length)],
+      rooms: getRandomNumber(rooms.MIN, rooms.MAX),
+      guests: getRandomNumber(guests.MIN, guests.MAX),
+      checkin: time[getRandomNumber(0, time.length)],
+      chekout: time[getRandomNumber(0, time.length)],
+      features: getRandomFeatures(),
+      description: '',
+      photos: getSortPhotos()
     },
     location: {
       x: getRandomNumber(pinParams.WIDTH / 2, searchAreaWidth - pinParams.WIDTH / 2),
@@ -78,6 +133,7 @@ var generateAds = function (amount) {
 };
 
 var ads = generateAds(ADS_AMOUNT);
+console.log(ads);
 
 // функция вставки шаблона
 var renderPin = function (ad) {
@@ -85,7 +141,7 @@ var renderPin = function (ad) {
   pinElement.style.left = ad.location.x - pinParams.WIDTH / 2 + 'px';
   pinElement.style.top = ad.location.y - pinParams.HEIGHT + 'px';
   pinElement.querySelector('img').src = ad.author.avatar;
-  pinElement.querySelector('img').alt = ad.author.offer;
+  pinElement.querySelector('img').alt = ad.offer.title;
 
   return pinElement;
 };
