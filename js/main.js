@@ -27,17 +27,17 @@ var offerParams = {
 var price = {
   MIN: 1000,
   MAX: 1000000
-}
+};
 
 var rooms = {
   MIN: 1,
   MAX: 5
-}
+};
 
 var guests = {
   MIN: 1,
   MAX: 6
-}
+};
 
 var time = ['12:00', '13:00', '14:00'];
 
@@ -60,9 +60,6 @@ var similarPinTemplate = document.querySelector('#pin')
     .content
     .querySelector('.map__pin');
 
-// находим шаблон карточки объявления в template
-var similarCardTemplate = document.querySelector('#card').content;
-
 var similarPins = document.querySelector('.map__pins');
 
 // функция для получения рандомного числа
@@ -79,22 +76,22 @@ var getAvatarImg = function (index) {
 };
 
 var getRandomFeatures = function () {
-  var featuresAmount = [],
-  amount = getRandomNumber(1, FEATURES.length);
+  var featuresAmount = [];
+  var amount = getRandomNumber(1, FEATURES.length);
   for (var i = 0; i < amount; i++) {
     featuresAmount.push(FEATURES[i]);
   }
   return featuresAmount;
 };
 
-var compareRandom = function (a, b) {
+var compareRandom = function () {
   return Math.random() - 0.5;
-}
+};
 
 var getSortPhotos = function () {
   PHOTOS.sort(compareRandom);
   return PHOTOS;
-}
+};
 
 // функция создания объявления
 var getAd = function (index) {
@@ -133,7 +130,6 @@ var generateAds = function (amount) {
 };
 
 var ads = generateAds(ADS_AMOUNT);
-console.log(ads);
 
 // функция вставки шаблона
 var renderPin = function (ad) {
