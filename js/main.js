@@ -12,6 +12,11 @@ var pinParams = {
   HEIGHT: 70
 };
 
+var mainPinParams = {
+  WIDTH: 65,
+  HEIGHT: 87
+};
+
 var offerParams = {
   TITLE: ['Большая уютная квартира',
     'Маленькая неуютная квартира',
@@ -50,7 +55,6 @@ var AccomodationType = {
 
 // находим карту
 var map = document.querySelector('.map');
-map.classList.remove('map--faded');
 
 // максимальное значение координаты X поля, где будут располагаться все метки
 var searchAreaWidth = map.clientWidth;
@@ -163,8 +167,6 @@ var createFragment = function () {
   return fragment;
 };
 
-similarPins.appendChild(createFragment());
-
 // функция создания фрагмента фич для объявления
 var createFeaturesFragment = function (featuers) {
   var fragment = document.createDocumentFragment();
@@ -192,6 +194,8 @@ var createPhotosFragment = function (photos) {
   }
   return fragment;
 };
+
+// similarPins.appendChild(createFragment());
 
 // функция вставки шаблона объявления
 var renderCard = function (ad) {
@@ -234,4 +238,53 @@ var createCard = function (ad) {
   map.insertBefore(newElement, referenceElement); // map вверху (стр.55) объявлена временно, для открытия карты
 };
 
-createCard(ads[0]);
+// createCard(ads[0]);
+
+// функция блокировки полей форм
+var setDisabled = function (item) {
+  for (var i = 0; i < item.length; i++) {
+    item[i].setAttribute('disabled', 'disabled');
+  }
+};
+
+// функция разблокировки полей форм
+var unsetDisabled = function (item) {
+  for (var i = 0; i < item.length; i++) {
+    item[i].removeAttribute('disabled', 'disabled');
+  }
+};
+
+// находим формы и блокируем их поля
+var adForm = document.querySelector('.ad-form');
+var adFormItem = adForm.querySelectorAll('fieldset');
+setDisabled(adFormItem);
+
+var filtersForm = document.querySelector('.map__filters');
+var filtersFormItem = filtersForm.querySelectorAll('select');
+setDisabled(filtersFormItem);
+
+// заполняем адрес в неактивном состоянии
+var address = adForm.querySelector('#address');
+address.placeholder = mainPinParams.WIDTH / 2 + ', ' + mainPinParams.HEIGHT / 2;
+
+// функция вызова активного состояния страницы
+var getActiveState = function () {
+  map.classList.remove('map--faded');
+  similarPins.appendChild(createFragment());
+  createCard(ads[0]);
+  adForm.classList.remove('ad-form--disabled');
+  unsetDisabled(adFormItem);
+  unsetDisabled(filtersFormItem);
+  address.placeholder = mainPinParams.WIDTH / 2 + ', ' + mainPinParams.HEIGHT;
+};
+
+// отлавливаем первый клик по главному пину
+var mainPin = document.querySelector('.map__pin--main');
+mainPin.addEventListener('click', function () {
+  getActiveState();
+});
+
+// отлавливаем mouseup и прописываем адрес
+mainPin.addEventListener('mouseup', function () {
+  getActiveState();
+});
