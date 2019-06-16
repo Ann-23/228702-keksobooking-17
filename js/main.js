@@ -14,7 +14,8 @@ var pinParams = {
 
 var mainPinParams = {
   WIDTH: 65,
-  HEIGHT: 87
+  HEIGHT: 87,
+  START_HEIGHT: 65
 };
 
 var offerParams = {
@@ -235,56 +236,56 @@ var renderCard = function (ad) {
 var createCard = function (ad) {
   var newElement = renderCard(ad);
   var referenceElement = document.querySelector('.map__filters-container');
-  map.insertBefore(newElement, referenceElement); // map вверху (стр.55) объявлена временно, для открытия карты
+  map.insertBefore(newElement, referenceElement);
 };
 
-// createCard(ads[0]);
+createCard(ads[0]);
 
 // функция блокировки полей форм
-var setDisabled = function (item) {
-  for (var i = 0; i < item.length; i++) {
-    item[i].setAttribute('disabled', 'disabled');
+var disableFields = function (fields) {
+  for (var i = 0; i < fields.length; i++) {
+    fields[i].setAttribute('disabled', 'disabled');
   }
 };
 
 // функция разблокировки полей форм
-var unsetDisabled = function (item) {
-  for (var i = 0; i < item.length; i++) {
-    item[i].removeAttribute('disabled', 'disabled');
+var enableFields = function (fields) {
+  for (var i = 0; i < fields.length; i++) {
+    fields[i].removeAttribute('disabled', 'disabled');
   }
 };
 
 // находим формы и блокируем их поля
 var adForm = document.querySelector('.ad-form');
-var adFormItem = adForm.querySelectorAll('fieldset');
-setDisabled(adFormItem);
+var adFormFieldsets = adForm.querySelectorAll('fieldset');
+disableFields(adFormFieldsets);
 
 var filtersForm = document.querySelector('.map__filters');
-var filtersFormItem = filtersForm.querySelectorAll('select');
-setDisabled(filtersFormItem);
+var filtersFormSelects = filtersForm.querySelectorAll('select');
+enableFields(filtersFormSelects);
 
 // заполняем адрес в неактивном состоянии
+var mainPin = document.querySelector('.map__pin--main');
 var address = adForm.querySelector('#address');
-address.placeholder = mainPinParams.WIDTH / 2 + ', ' + mainPinParams.HEIGHT / 2;
+var mainPinX = +mainPin.style.left.split('px')[0];
+var mainPinY = +mainPin.style.top.split('px')[0];
+address.placeholder = mainPinX + mainPinParams.START_HEIGHT / 2 + ', ' + (mainPinY + mainPinParams.START_HEIGHT / 2);
 
-// функция вызова активного состояния страницы
-var getActiveState = function () {
+// функция вызова активго состояния страницы
+var activatePage = function () {
   map.classList.remove('map--faded');
-  similarPins.appendChild(createFragment());
-  createCard(ads[0]);
   adForm.classList.remove('ad-form--disabled');
-  unsetDisabled(adFormItem);
-  unsetDisabled(filtersFormItem);
-  address.placeholder = mainPinParams.WIDTH / 2 + ', ' + mainPinParams.HEIGHT;
+  enableFields(adFormFieldsets);
+  enableFields(filtersFormSelects);
+  similarPins.appendChild(createFragment());
 };
 
 // отлавливаем первый клик по главному пину
-var mainPin = document.querySelector('.map__pin--main');
 mainPin.addEventListener('click', function () {
-  getActiveState();
+  activatePage();
 });
 
 // отлавливаем mouseup и прописываем адрес
 mainPin.addEventListener('mouseup', function () {
-  getActiveState();
+  address.placeholder = mainPinX + mainPinParams.WIDTH / 2 + ', ' + (mainPinY + mainPinParams.HEIGHT);
 });
