@@ -289,3 +289,34 @@ mainPin.addEventListener('click', function () {
 mainPin.addEventListener('mouseup', function () {
   address.placeholder = mainPinX + mainPinParams.WIDTH / 2 + ', ' + (mainPinY + mainPinParams.HEIGHT);
 });
+
+var inputPrice = adForm.querySelector('#price');
+var selectAccomodationType = adForm.querySelector('#type');
+var options = selectAccomodationType.querySelectorAll('option');
+
+var onSelectTypeChange = function () {
+  for (var i = 0; i < options.length; i++) {
+    switch (options[i].value) {
+      case 'bungalo':
+        inputPrice.setAttribute('min', '0');
+        inputPrice.placeholder = '0';
+        break;
+      case 'flat':
+        inputPrice.setAttribute('min', '1000');
+        inputPrice.placeholder = '1000';
+        break;
+      case 'house':
+        inputPrice.setAttribute('min', '5000');
+        inputPrice.placeholder = '5000';
+        break;
+      case 'palace':
+        inputPrice.setAttribute('min', '10000');
+        inputPrice.placeholder = '10000';
+        break;
+    }
+  }
+};
+
+selectAccomodationType.addEventListener('change', function () {
+  onSelectTypeChange();
+});
