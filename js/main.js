@@ -360,13 +360,39 @@ var fieldGuests = adForm.querySelector('#capacity');
 var optionsGuests = fieldGuests.querySelectorAll('option');
 var checkArray = Object.keys(checkParams);
 
+// ["1", "2", "3", "100"]
+// для 3 / для 2 / для 1 / не для
+
 var onFieldRoomsChange = function (select) {
-  for (var i = 0; i < checkArray.length; i++) {
-    switch (select) {
-      case checkParams[i]:
-        optionsGuests.option.removeAttribute('disabled', 'disabled');
-        break;
-    }
+  switch (select) {
+    case checkArray[0]:
+      optionsGuests[2].removeAttribute('disabled', 'disabled');
+
+      optionsGuests[0].setAttribute('disabled', 'disabled');
+      optionsGuests[1].setAttribute('disabled', 'disabled');
+      optionsGuests[3].setAttribute('disabled', 'disabled');
+      break;
+    case checkArray[1]:
+      optionsGuests[1].removeAttribute('disabled', 'disabled');
+      optionsGuests[2].removeAttribute('disabled', 'disabled');
+
+      optionsGuests[0].setAttribute('disabled', 'disabled');
+      optionsGuests[3].setAttribute('disabled', 'disabled');
+      break;
+    case checkArray[2]:
+      optionsGuests[0].removeAttribute('disabled', 'disabled');
+      optionsGuests[1].removeAttribute('disabled', 'disabled');
+      optionsGuests[2].removeAttribute('disabled', 'disabled');
+
+      optionsGuests[3].setAttribute('disabled', 'disabled');
+      break;
+    case checkArray[3]:
+      optionsGuests[3].removeAttribute('disabled', 'disabled');
+
+      optionsGuests[0].setAttribute('disabled', 'disabled');
+      optionsGuests[1].setAttribute('disabled', 'disabled');
+      optionsGuests[2].setAttribute('disabled', 'disabled');
+      break;
   }
 };
 
