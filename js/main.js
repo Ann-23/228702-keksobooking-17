@@ -14,7 +14,7 @@ var pinParams = {
 
 var mainPinParams = {
   WIDTH: 65,
-  HEIGHT: 87,
+  HEIGHT: 84,
   START_HEIGHT: 65
 };
 
@@ -281,7 +281,7 @@ var mainPin = document.querySelector('.map__pin--main');
 var address = adForm.querySelector('#address');
 var mainPinX = +mainPin.style.left.split('px')[0];
 var mainPinY = +mainPin.style.top.split('px')[0];
-address.placeholder = mainPinX + mainPinParams.START_HEIGHT / 2 + ', ' + (mainPinY + mainPinParams.START_HEIGHT / 2);
+address.placeholder = Math.floor(mainPinX + mainPinParams.START_HEIGHT / 2) + ', ' + Math.floor((mainPinY + mainPinParams.START_HEIGHT / 2));
 
 // функция вызова активго состояния страницы
 var activatePage = function () {
@@ -299,7 +299,7 @@ mainPin.addEventListener('click', function () {
 
 // отлавливаем mouseup и прописываем адрес
 mainPin.addEventListener('mouseup', function () {
-  address.placeholder = mainPinX + mainPinParams.WIDTH / 2 + ', ' + (mainPinY + mainPinParams.HEIGHT);
+  address.placeholder = Math.floor(mainPinX + mainPinParams.WIDTH / 2) + ', ' + Math.floor(mainPinY + mainPinParams.HEIGHT);
 });
 
 // синхронизация полей тип жилья/стоимость
@@ -360,19 +360,17 @@ var fieldGuests = adForm.querySelector('#capacity');
 var optionsGuests = fieldGuests.querySelectorAll('option');
 var checkArray = Object.keys(checkParams);
 
-for (var i = 0; i < optionsGuests.length; i++) {
-  optionsGuests[i].setAttribute('disabled', 'disabled');
-}
-
 var onFieldRoomsChange = function (select) {
-  for (var j = 0; j < checkArray.length; i++) {
+  for (var i = 0; i < checkArray.length; i++) {
     switch (select) {
-      case checkParams[j]:
+      case checkParams[i]:
         optionsGuests.option.removeAttribute('disabled', 'disabled');
         break;
     }
   }
 };
+
+disableFields(optionsGuests);
 
 fieldRooms.addEventListener('change', function () {
   onFieldRoomsChange(fieldRooms.value);
