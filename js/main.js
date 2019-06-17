@@ -48,10 +48,24 @@ var guests = {
 };
 
 var AccomodationType = {
-  PALACE: 'Дворец',
-  FLAT: 'Квартира',
-  HOUSE: 'Дом',
-  BUNGALO: 'Бунгало'
+  bungalo: 'Бунгало',
+  flat: 'Квартира',
+  house: 'Дом',
+  palace: 'Дворец'
+};
+
+var AccomodationPrice = {
+  'bungalo': 0,
+  'flat': 1000,
+  'house': 5000,
+  'palace': 10000
+};
+
+var checkParams = {
+  '1': ['1'],
+  '2': ['1', '2'],
+  '3': ['1', '2', '3'],
+  '100': ['0']
 };
 
 // находим карту
@@ -68,9 +82,9 @@ var similarPinTemplate = document.querySelector('#pin')
 var similarPins = document.querySelector('.map__pins');
 
 // находим шаблон карточки объявления в template
-var similarCardTemplate = document.querySelector('#card')
-    .content
-    .querySelector('.map__card');
+// var similarCardTemplate = document.querySelector('#card')
+//    .content
+//    .querySelector('.map__card');
 
 // функция для получения рандомного числа
 var getRandomNumber = function (min, max) {
@@ -168,7 +182,7 @@ var createFragment = function () {
   return fragment;
 };
 
-// функция создания фрагмента фич для объявления
+/* // функция создания фрагмента фич для объявления
 var createFeaturesFragment = function (featuers) {
   var fragment = document.createDocumentFragment();
   for (var i = 0; i < featuers.length; i++) {
@@ -196,10 +210,8 @@ var createPhotosFragment = function (photos) {
   return fragment;
 };
 
-// similarPins.appendChild(createFragment());
-
 // функция вставки шаблона объявления
-var renderCard = function (ad) {
+  var renderCard = function (ad) {
   var cardElement = similarCardTemplate.cloneNode(true);
   cardElement.querySelector('.popup__avatar').src = ad.author.avatar;
 
@@ -239,7 +251,7 @@ var createCard = function (ad) {
   map.insertBefore(newElement, referenceElement);
 };
 
-createCard(ads[0]);
+createCard(ads[0]);*/
 
 // функция блокировки полей форм
 var disableFields = function (fields) {
@@ -290,53 +302,78 @@ mainPin.addEventListener('mouseup', function () {
   address.placeholder = mainPinX + mainPinParams.WIDTH / 2 + ', ' + (mainPinY + mainPinParams.HEIGHT);
 });
 
-var selectedType = adForm.querySelector('#type');
-var inputPrice = adForm.querySelector('#price');
+// синхронизация полей тип жилья/стоимость
+var fieldType = adForm.querySelector('#type');
+var fieldPrice = adForm.querySelector('#price');
+var accomodationArray = Object.keys(AccomodationPrice);
 
 var onSelectedTypeChange = function (select) {
-  switch (select) {
-    case 'bungalo':
-      inputPrice.setAttribute('min', '0');
-      inputPrice.placeholder = '0';
-      break;
-    case 'flat':
-      inputPrice.setAttribute('min', '1000');
-      inputPrice.placeholder = '1000';
-      break;
-    case 'house':
-      inputPrice.setAttribute('min', '5000');
-      inputPrice.placeholder = '5000';
-      break;
-    case 'palace':
-      inputPrice.setAttribute('min', '10000');
-      inputPrice.placeholder = '10000';
-      break;
+  for (var i = 0; i < accomodationArray.length; i++) {
+    switch (select) {
+      case accomodationArray[i]:
+        fieldPrice.min = AccomodationPrice[select];
+        fieldPrice.placeholder = AccomodationPrice[select];
+        break;
+    }
   }
 };
 
-selectedType.addEventListener('change', function () {
-  var selectValue = selectedType.value;
-  onSelectedTypeChange(selectValue);
+fieldType.addEventListener('change', function () {
+  onSelectedTypeChange(fieldType.value);
 });
 
-var selectedTimeIn = adForm.querySelector('#timein');
-var inputTimeOut = adForm.querySelector('#timeout');
+// блок по синхронизации полей со временем заезда/выезда
+var fieldTimeIn = adForm.querySelector('#timein');
+var fieldTimeOut = adForm.querySelector('#timeout');
 
-var onSelectedTimeChange = function (select) {
-  switch (select) {
-    case '12:00':
-      inputTimeOut.value = '12:00';
-      break;
-    case '13:00':
-      inputTimeOut.value = '13:00';
-      break;
-    case '14:00':
-      inputTimeOut.value = '14:00';
-      break;
+var onFieldTimeInChange = function (select) {
+  for (var i = 0; i < offerParams.TIME.length; i++) {
+    switch (select) {
+      case offerParams.TIME[i]:
+        fieldTimeOut.value = offerParams.TIME[i];
+        break;
+    }
   }
 };
 
-selectedTimeIn.addEventListener('change', function () {
-  var selectValue = selectedTimeIn.value;
-  onSelectedTimeChange(selectValue);
+fieldTimeIn.addEventListener('change', function () {
+  onFieldTimeInChange(fieldTimeIn.value);
+});
+
+var onFieldTimeOutChange = function (select) {
+  for (var i = 0; i < offerParams.TIME.length; i++) {
+    switch (select) {
+      case offerParams.TIME[i]:
+        fieldTimeIn.value = offerParams.TIME[i];
+        break;
+    }
+  }
+};
+
+fieldTimeOut.addEventListener('change', function () {
+  onFieldTimeOutChange(fieldTimeOut.value);
+});
+
+// синхронизация полей количества комнат и гостей
+var fieldRooms = adForm.querySelector('#room_number');
+var fieldGuests = adForm.querySelector('#capacity');
+var optionsGuests = fieldGuests.querySelectorAll('option');
+var checkArray = Object.keys(checkParams);
+
+for (var i = 0; i < optionsGuests.length; i++) {
+  optionsGuests[i].setAttribute('disabled', 'disabled');
+}
+
+var onFieldRoomsChange = function (select) {
+  for (var j = 0; j < checkArray.length; i++) {
+    switch (select) {
+      case checkParams[j]:
+        optionsGuests.option.removeAttribute('disabled', 'disabled');
+        break;
+    }
+  }
+};
+
+fieldRooms.addEventListener('change', function () {
+  onFieldRoomsChange(fieldRooms.value);
 });
