@@ -14,7 +14,7 @@ var pinParams = {
 
 var mainPinParams = {
   WIDTH: 65,
-  HEIGHT: 84,
+  HEIGHT: 81,
   START_HEIGHT: 65
 };
 
@@ -47,14 +47,14 @@ var guests = {
   MAX: 6
 };
 
-var AccomodationType = {
+var AccommodationType = {
   bungalo: 'Бунгало',
   flat: 'Квартира',
   house: 'Дом',
   palace: 'Дворец'
 };
 
-var AccomodationPrice = {
+var TypePrice = {
   'bungalo': 0,
   'flat': 1000,
   'house': 5000,
@@ -117,8 +117,8 @@ var getSortPhotos = function () {
   return offerParams.PHOTOS;
 };
 
-var getAccomodationType = function () {
-  var typeObject = Object.keys(AccomodationType);
+var getAccommodationType = function () {
+  var typeObject = Object.keys(AccommodationType);
   var typeNumber = getRandomNumber(0, typeObject.length - 1);
 
   return typeObject[typeNumber];
@@ -138,7 +138,7 @@ var getAd = function (index) {
       guests: getRandomNumber(guests.MIN, guests.MAX),
       checkin: offerParams.TIME[getRandomNumber(0, offerParams.TIME.length)],
       checkout: offerParams.TIME[getRandomNumber(0, offerParams.TIME.length)],
-      type: getAccomodationType(),
+      type: getAccommodationType(),
       features: getRandomFeatures(),
       description: '',
       photos: getSortPhotos()
@@ -225,7 +225,7 @@ var createPhotosFragment = function (photos) {
   cardPrice.textContent = ad.offer.price + ' ₽/ночь';
 
   var cardType = cardElement.querySelector('.popup__type');
-  cardType.textContent = AccomodationType[ad.offer.type];
+  cardType.textContent = AccommodationType[ad.offer.type];
 
   var cardGuest = cardElement.querySelector('.popup__text--capacity');
   cardGuest.textContent = ad.offer.rooms + ' комнаты для ' + ad.offer.guests + ' гостей';
@@ -300,103 +300,54 @@ mainPin.addEventListener('click', function () {
 // отлавливаем mouseup и прописываем адрес
 mainPin.addEventListener('mouseup', function () {
   address.placeholder = Math.floor(mainPinX + mainPinParams.WIDTH / 2) + ', ' + Math.floor(mainPinY + mainPinParams.HEIGHT);
+  address.value = Math.floor(mainPinX + mainPinParams.WIDTH / 2) + ', ' + Math.floor(mainPinY + mainPinParams.HEIGHT);
 });
 
 // синхронизация полей тип жилья/стоимость
 var fieldType = adForm.querySelector('#type');
 var fieldPrice = adForm.querySelector('#price');
-var accomodationArray = Object.keys(AccomodationPrice);
 
-var onSelectedTypeChange = function (select) {
-  for (var i = 0; i < accomodationArray.length; i++) {
-    switch (select) {
-      case accomodationArray[i]:
-        fieldPrice.min = AccomodationPrice[select];
-        fieldPrice.placeholder = AccomodationPrice[select];
-        break;
-    }
-  }
+var onFieldTypeChange = function (type) {
+  fieldPrice.min = TypePrice[type];
+  fieldPrice.placeholder = TypePrice[type];
 };
 
 fieldType.addEventListener('change', function () {
-  onSelectedTypeChange(fieldType.value);
+  onFieldTypeChange(fieldType.value);
 });
 
 // блок по синхронизации полей со временем заезда/выезда
 var fieldTimeIn = adForm.querySelector('#timein');
 var fieldTimeOut = adForm.querySelector('#timeout');
 
-var onFieldTimeInChange = function (select) {
-  for (var i = 0; i < offerParams.TIME.length; i++) {
-    switch (select) {
-      case offerParams.TIME[i]:
-        fieldTimeOut.value = offerParams.TIME[i];
-        break;
-    }
-  }
-};
-
-fieldTimeIn.addEventListener('change', function () {
-  onFieldTimeInChange(fieldTimeIn.value);
-});
-
-var onFieldTimeOutChange = function (select) {
-  for (var i = 0; i < offerParams.TIME.length; i++) {
-    switch (select) {
-      case offerParams.TIME[i]:
-        fieldTimeIn.value = offerParams.TIME[i];
-        break;
-    }
-  }
+var onFieldTimeChange = function (field, value) {
+  field.value = value;
 };
 
 fieldTimeOut.addEventListener('change', function () {
-  onFieldTimeOutChange(fieldTimeOut.value);
+  onFieldTimeChange(fieldTimeIn, fieldTimeOut.value);
+});
+
+fieldTimeIn.addEventListener('change', function () {
+  onFieldTimeChange(fieldTimeOut, fieldTimeIn.value);
 });
 
 // синхронизация полей количества комнат и гостей
 var fieldRooms = adForm.querySelector('#room_number');
 var fieldGuests = adForm.querySelector('#capacity');
 var optionsGuests = fieldGuests.querySelectorAll('option');
-var checkArray = Object.keys(checkParams);
 
-// ["1", "2", "3", "100"]
-// для 3 / для 2 / для 1 / не для
-
-var onFieldRoomsChange = function (select) {
-  switch (select) {
-    case checkArray[0]:
-      optionsGuests[2].removeAttribute('disabled', 'disabled');
-
-      optionsGuests[0].setAttribute('disabled', 'disabled');
-      optionsGuests[1].setAttribute('disabled', 'disabled');
-      optionsGuests[3].setAttribute('disabled', 'disabled');
-      break;
-    case checkArray[1]:
-      optionsGuests[1].removeAttribute('disabled', 'disabled');
-      optionsGuests[2].removeAttribute('disabled', 'disabled');
-
-      optionsGuests[0].setAttribute('disabled', 'disabled');
-      optionsGuests[3].setAttribute('disabled', 'disabled');
-      break;
-    case checkArray[2]:
-      optionsGuests[0].removeAttribute('disabled', 'disabled');
-      optionsGuests[1].removeAttribute('disabled', 'disabled');
-      optionsGuests[2].removeAttribute('disabled', 'disabled');
-
-      optionsGuests[3].setAttribute('disabled', 'disabled');
-      break;
-    case checkArray[3]:
-      optionsGuests[3].removeAttribute('disabled', 'disabled');
-
-      optionsGuests[0].setAttribute('disabled', 'disabled');
-      optionsGuests[1].setAttribute('disabled', 'disabled');
-      optionsGuests[2].setAttribute('disabled', 'disabled');
-      break;
+var onFieldRoomsChange = function (value) {
+  disableFields(optionsGuests);
+  var avaliableOptions = checkParams[value];
+  for (var i = 0; i < avaliableOptions.length; i++) {
+    for (var j = 0; j < optionsGuests.length; j++) {
+      if (avaliableOptions[i] === optionsGuests[j].value) {
+        optionsGuests[j].disabled = false;
+      }
+    }
   }
 };
-
-disableFields(optionsGuests);
 
 fieldRooms.addEventListener('change', function () {
   onFieldRoomsChange(fieldRooms.value);
