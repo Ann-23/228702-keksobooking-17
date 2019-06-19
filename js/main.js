@@ -283,26 +283,6 @@ var mainPinX = +mainPin.style.left.split('px')[0];
 var mainPinY = +mainPin.style.top.split('px')[0];
 address.placeholder = Math.floor(mainPinX + mainPinParams.WIDTH / 2) + ', ' + Math.floor((mainPinY + mainPinParams.START_HEIGHT / 2));
 
-// функция вызова активго состояния страницы
-var activatePage = function () {
-  map.classList.remove('map--faded');
-  adForm.classList.remove('ad-form--disabled');
-  enableFields(adFormFieldsets);
-  enableFields(filtersFormSelects);
-  similarPins.appendChild(createFragment());
-};
-
-// отлавливаем первый клик по главному пину
-mainPin.addEventListener('click', function () {
-  activatePage();
-});
-
-// отлавливаем mouseup и прописываем адрес
-mainPin.addEventListener('mouseup', function () {
-  address.placeholder = Math.floor(mainPinX + mainPinParams.WIDTH / 2) + ', ' + Math.floor(mainPinY + mainPinParams.HEIGHT);
-  address.value = Math.floor(mainPinX + mainPinParams.WIDTH / 2) + ', ' + Math.floor(mainPinY + mainPinParams.HEIGHT);
-});
-
 // синхронизация полей тип жилья/стоимость
 var fieldType = adForm.querySelector('#type');
 var fieldPrice = adForm.querySelector('#price');
@@ -378,4 +358,79 @@ var btnSubmit = adForm.querySelector('.ad-form__submit');
 btnSubmit.addEventListener('submit', function (evt) {
   evt.preventDefault();
   onFieldGuestsChange(fieldGuests.value);
+});
+
+// функция вызова активго состояния страницы
+var activatePage = function () {
+  map.classList.remove('map--faded');
+  adForm.classList.remove('ad-form--disabled');
+  enableFields(adFormFieldsets);
+  enableFields(filtersFormSelects);
+  similarPins.appendChild(createFragment());
+};
+
+// логика активации и перемещений
+mainPin.addEventListener('mousedown', function (evt) {
+  evt.preventDefault();
+
+  var startCoords = {
+    x: evt.clientX,
+    y: evt.clientY
+  };
+
+  activatePage();
+  address.placeholder = Math.floor(mainPinX + mainPinParams.WIDTH / 2) + ', ' + Math.floor(mainPinY + mainPinParams.HEIGHT);
+  address.value = Math.floor(mainPinX + mainPinParams.WIDTH / 2) + ', ' + Math.floor(mainPinY + mainPinParams.HEIGHT);
+
+  var onMouseMove = function (moveEvt) {
+    moveEvt.preventDefault();
+
+    var shift = {
+      x: startCoords.x - moveEvt.clientX,
+      y: startCoords.y - moveEvt.clientY
+    };
+
+    startCoords = {
+      x: moveEvt.clientX,
+      y: moveEvt.clientY
+    };
+
+    mainPin.style.left = (mainPin.offsetLeft - shift.x) + 'px';
+    mainPin.style.top = (mainPin.offsetTop - shift.y) + 'px';
+
+    mainPinX = +mainPin.style.left.split('px')[0];
+    mainPinY = +mainPin.style.top.split('px')[0];
+
+    address.placeholder = Math.floor(mainPinX + mainPinParams.WIDTH / 2) + ', ' + Math.floor(mainPinY + mainPinParams.HEIGHT);
+    address.value = Math.floor(mainPinX + mainPinParams.WIDTH / 2) + ', ' + Math.floor(mainPinY + mainPinParams.HEIGHT);
+  };
+
+  var onMouseUp = function (upEvt) {
+    upEvt.preventDefault();
+
+    var shift = {
+      x: startCoords.x - upEvt.clientX,
+      y: startCoords.y - upEvt.clientY
+    };
+
+    startCoords = {
+      x: upEvt.clientX,
+      y: upEvt.clientY
+    };
+
+    mainPin.style.left = (mainPin.offsetLeft - shift.x) + 'px';
+    mainPin.style.top = (mainPin.offsetTop - shift.y) + 'px';
+
+    mainPinX = +mainPin.style.left.split('px')[0];
+    mainPinY = +mainPin.style.top.split('px')[0];
+
+    address.placeholder = Math.floor(mainPinX + mainPinParams.WIDTH / 2) + ', ' + Math.floor(mainPinY + mainPinParams.HEIGHT);
+    address.value = Math.floor(mainPinX + mainPinParams.WIDTH / 2) + ', ' + Math.floor(mainPinY + mainPinParams.HEIGHT);
+
+    map.removeEventListener('mousemove', onMouseMove);
+    map.removeEventListener('mouseup', onMouseUp);
+  };
+
+  map.addEventListener('mousemove', onMouseMove);
+  map.addEventListener('mouseup', onMouseUp);
 });
