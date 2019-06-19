@@ -61,7 +61,7 @@ var TypePrice = {
   'palace': 10000
 };
 
-var checkParams = {
+var GuestsByRoom = {
   '1': ['1'],
   '2': ['1', '2'],
   '3': ['1', '2', '3'],
@@ -256,14 +256,14 @@ createCard(ads[0]);*/
 // функция блокировки полей форм
 var disableFields = function (fields) {
   for (var i = 0; i < fields.length; i++) {
-    fields[i].setAttribute('disabled', 'disabled');
+    fields[i].disabled = true;
   }
 };
 
 // функция разблокировки полей форм
 var enableFields = function (fields) {
   for (var i = 0; i < fields.length; i++) {
-    fields[i].removeAttribute('disabled', 'disabled');
+    fields[i].disabled = false;
   }
 };
 
@@ -274,14 +274,14 @@ disableFields(adFormFieldsets);
 
 var filtersForm = document.querySelector('.map__filters');
 var filtersFormSelects = filtersForm.querySelectorAll('select');
-enableFields(filtersFormSelects);
+disableFields(filtersFormSelects);
 
 // заполняем адрес в неактивном состоянии
 var mainPin = document.querySelector('.map__pin--main');
 var address = adForm.querySelector('#address');
 var mainPinX = +mainPin.style.left.split('px')[0];
 var mainPinY = +mainPin.style.top.split('px')[0];
-address.placeholder = Math.floor(mainPinX + mainPinParams.START_HEIGHT / 2) + ', ' + Math.floor((mainPinY + mainPinParams.START_HEIGHT / 2));
+address.placeholder = Math.floor(mainPinX + mainPinParams.WIDTH / 2) + ', ' + Math.floor((mainPinY + mainPinParams.START_HEIGHT / 2));
 
 // функция вызова активго состояния страницы
 var activatePage = function () {
@@ -339,16 +339,43 @@ var optionsGuests = fieldGuests.querySelectorAll('option');
 
 var onFieldRoomsChange = function (value) {
   disableFields(optionsGuests);
-  var avaliableOptions = checkParams[value];
-  for (var i = 0; i < avaliableOptions.length; i++) {
-    for (var j = 0; j < optionsGuests.length; j++) {
-      if (avaliableOptions[i] === optionsGuests[j].value) {
-        optionsGuests[j].disabled = false;
+  var avaliableOptions = GuestsByRoom[value];
+  for (var i = 0; i < optionsGuests.length; i++) {
+    avaliableOptions.forEach(function (element) {
+      if (optionsGuests[i].value.indexOf(element) !== -1) {
+        optionsGuests[i].disabled = false;
       }
-    }
+    });
   }
 };
 
 fieldRooms.addEventListener('change', function () {
   onFieldRoomsChange(fieldRooms.value);
+});
+
+var RoomsByGuests = {
+  '1': ['1'],
+  '2': ['2', '3'],
+  '3': ['3'],
+  '0': ['100']
+};
+
+var optionsRooms = fieldRooms.querySelectorAll('option');
+
+var onFieldGuestsChange = function (value) {
+  var avaliableOptions = RoomsByGuests[value];
+  for (var i = 0; i < optionsRooms.length; i++) {
+    avaliableOptions.forEach(function (element) {
+      if (optionsRooms[i].value.indexOf(element) !== -1) {
+        fieldRooms.setCustomValidity('Выберете, пожалуйста, другое значение');
+      }
+    });
+  }
+};
+
+var btnSubmit = adForm.querySelector('.ad-form__submit');
+
+btnSubmit.addEventListener('submit', function (evt) {
+  evt.preventDefault();
+  onFieldGuestsChange(fieldGuests.value);
 });
