@@ -313,51 +313,33 @@ fieldTimeIn.addEventListener('change', function () {
 });
 
 // синхронизация полей количества комнат и гостей
+
 var fieldRooms = adForm.querySelector('#room_number');
 var fieldGuests = adForm.querySelector('#capacity');
 var optionsGuests = fieldGuests.querySelectorAll('option');
 
 var onFieldRoomsChange = function (value) {
-  disableFields(optionsGuests);
   var avaliableOptions = GuestsByRoom[value];
-  for (var i = 0; i < optionsGuests.length; i++) {
-    avaliableOptions.forEach(function (element) {
-      if (optionsGuests[i].value.indexOf(element) !== -1) {
-        optionsGuests[i].disabled = false;
-      }
-    });
+  optionsGuests.forEach(function (option) {
+    option.disabled = avaliableOptions.indexOf(option.value) === -1;
+  });
+};
+
+var onFieldGuestsValidate = function (value) {
+  var avaliableOptions = GuestsByRoom[value];
+  if (avaliableOptions.indexOf(fieldGuests.value) === -1) {
+    fieldGuests.setCustomValidity('Укажите другое количество гостей');
   }
+  fieldGuests.addEventListener('change', function () {
+    if (avaliableOptions.indexOf(fieldGuests.value) !== -1) {
+      fieldGuests.setCustomValidity('');
+    }
+  });
 };
 
 fieldRooms.addEventListener('change', function () {
   onFieldRoomsChange(fieldRooms.value);
-});
-
-var RoomsByGuests = {
-  '1': ['1'],
-  '2': ['2', '3'],
-  '3': ['3'],
-  '0': ['100']
-};
-
-var optionsRooms = fieldRooms.querySelectorAll('option');
-
-var onFieldGuestsChange = function (value) {
-  var avaliableOptions = RoomsByGuests[value];
-  for (var i = 0; i < optionsRooms.length; i++) {
-    avaliableOptions.forEach(function (element) {
-      if (optionsRooms[i].value.indexOf(element) !== -1) {
-        fieldRooms.setCustomValidity('Выберете, пожалуйста, другое значение');
-      }
-    });
-  }
-};
-
-var btnSubmit = adForm.querySelector('.ad-form__submit');
-
-btnSubmit.addEventListener('submit', function (evt) {
-  evt.preventDefault();
-  onFieldGuestsChange(fieldGuests.value);
+  onFieldGuestsValidate(fieldRooms.value);
 });
 
 // функция вызова активго состояния страницы
