@@ -380,7 +380,7 @@ mainPin.addEventListener('mousedown', function (evt) {
     var xNew = mainPin.offsetLeft - shift.x;
     var yNew = mainPin.offsetTop - shift.y;
 
-    if ((pinParams.WIDTH / 2 <= xNew <= searchAreaWidth - pinParams.WIDTH / 2) && (yCord.MIN <= yNew <= yCord.MAX)) {
+    if (pinParams.WIDTH / 2 <= xNew <= searchAreaWidth - pinParams.WIDTH / 2 && yCord.MIN <= yNew <= yCord.MAX) {
       mainPin.style.left = xNew + 'px';
       mainPin.style.top = yNew + 'px';
 
