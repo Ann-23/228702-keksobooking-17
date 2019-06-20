@@ -377,14 +377,16 @@ mainPin.addEventListener('mousedown', function (evt) {
       y: moveEvt.clientY
     };
 
-    mainPin.style.left = (mainPin.offsetLeft - shift.x) + 'px';
-    mainPin.style.top = (mainPin.offsetTop - shift.y) + 'px';
+    var xNew = mainPin.offsetLeft - shift.x;
+    var yNew = mainPin.offsetTop - shift.y;
 
-    mainPinX = +mainPin.style.left.split('px')[0];
-    mainPinY = +mainPin.style.top.split('px')[0];
+    if (pinParams.WIDTH / 2 <= xNew <= searchAreaWidth - pinParams.WIDTH / 2 & yCord.MIN <= yNew <= yCord.MAX) {
+      mainPin.style.left = xNew + 'px';
+      mainPin.style.top = yNew + 'px';
 
-    address.placeholder = Math.floor(mainPinX + mainPinParams.WIDTH / 2) + ', ' + Math.floor(mainPinY + mainPinParams.HEIGHT);
-    address.value = Math.floor(mainPinX + mainPinParams.WIDTH / 2) + ', ' + Math.floor(mainPinY + mainPinParams.HEIGHT);
+      address.placeholder = Math.floor(xNew + mainPinParams.WIDTH / 2) + ', ' + Math.floor(yNew + mainPinParams.HEIGHT);
+      address.value = Math.floor(xNew + mainPinParams.WIDTH / 2) + ', ' + Math.floor(yNew + mainPinParams.HEIGHT);
+    }
   };
 
   var onMouseUp = function (upEvt) {
@@ -400,14 +402,16 @@ mainPin.addEventListener('mousedown', function (evt) {
       y: upEvt.clientY
     };
 
-    mainPin.style.left = (mainPin.offsetLeft - shift.x) + 'px';
-    mainPin.style.top = (mainPin.offsetTop - shift.y) + 'px';
+    var xNew = mainPin.offsetLeft - shift.x;
+    var yNew = mainPin.offsetTop - shift.y;
 
-    mainPinX = +mainPin.style.left.split('px')[0];
-    mainPinY = +mainPin.style.top.split('px')[0];
+    if (pinParams.WIDTH / 2 <= xNew <= searchAreaWidth - pinParams.WIDTH / 2 & yCord.MIN <= yNew <= yCord.MAX) {
+      mainPin.style.left = xNew + 'px';
+      mainPin.style.top = yNew + 'px';
 
-    address.placeholder = Math.floor(mainPinX + mainPinParams.WIDTH / 2) + ', ' + Math.floor(mainPinY + mainPinParams.HEIGHT);
-    address.value = Math.floor(mainPinX + mainPinParams.WIDTH / 2) + ', ' + Math.floor(mainPinY + mainPinParams.HEIGHT);
+      address.placeholder = Math.floor(xNew + mainPinParams.WIDTH / 2) + ', ' + Math.floor(yNew + mainPinParams.HEIGHT);
+      address.value = Math.floor(xNew + mainPinParams.WIDTH / 2) + ', ' + Math.floor(yNew + mainPinParams.HEIGHT);
+    }
 
     map.removeEventListener('mousemove', onMouseMove);
     map.removeEventListener('mouseup', onMouseUp);
