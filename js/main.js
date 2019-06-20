@@ -380,13 +380,16 @@ mainPin.addEventListener('mousedown', function (evt) {
     var xNew = mainPin.offsetLeft - shift.x;
     var yNew = mainPin.offsetTop - shift.y;
 
-    if (pinParams.WIDTH / 2 <= xNew <= searchAreaWidth - pinParams.WIDTH / 2 && yCord.MIN <= yNew <= yCord.MAX) {
+    if ((xNew > 0) && (xNew < searchAreaWidth - pinParams.WIDTH)) {
       mainPin.style.left = xNew + 'px';
-      mainPin.style.top = yNew + 'px';
-
-      address.placeholder = Math.floor(xNew + mainPinParams.WIDTH / 2) + ', ' + Math.floor(yNew + mainPinParams.HEIGHT);
-      address.value = Math.floor(xNew + mainPinParams.WIDTH / 2) + ', ' + Math.floor(yNew + mainPinParams.HEIGHT);
     }
+
+    if (yNew > yCord.MIN && yNew < yCord.MAX) {
+      mainPin.style.top = yNew + 'px';
+    }
+
+    address.placeholder = Math.floor(xNew + mainPinParams.WIDTH / 2) + ', ' + Math.floor(yNew + mainPinParams.HEIGHT);
+    address.value = Math.floor(xNew + mainPinParams.WIDTH / 2) + ', ' + Math.floor(yNew + mainPinParams.HEIGHT);
   };
 
   var onMouseUp = function (upEvt) {
@@ -405,13 +408,16 @@ mainPin.addEventListener('mousedown', function (evt) {
     var xNew = mainPin.offsetLeft - shift.x;
     var yNew = mainPin.offsetTop - shift.y;
 
-    if ((pinParams.WIDTH / 2 <= xNew <= searchAreaWidth - pinParams.WIDTH / 2) && (yCord.MIN <= yNew <= yCord.MAX)) {
+    if ((xNew > 0) && (xNew < searchAreaWidth - pinParams.WIDTH)) {
       mainPin.style.left = xNew + 'px';
-      mainPin.style.top = yNew + 'px';
-
-      address.placeholder = Math.floor(xNew + mainPinParams.WIDTH / 2) + ', ' + Math.floor(yNew + mainPinParams.HEIGHT);
-      address.value = Math.floor(xNew + mainPinParams.WIDTH / 2) + ', ' + Math.floor(yNew + mainPinParams.HEIGHT);
     }
+
+    if (yNew > yCord.MIN && yNew < yCord.MAX) {
+      mainPin.style.top = yNew + 'px';
+    }
+
+    address.placeholder = Math.floor(xNew + mainPinParams.WIDTH / 2) + ', ' + Math.floor(yNew + mainPinParams.HEIGHT);
+    address.value = Math.floor(xNew + mainPinParams.WIDTH / 2) + ', ' + Math.floor(yNew + mainPinParams.HEIGHT);
 
     map.removeEventListener('mousemove', onMouseMove);
     map.removeEventListener('mouseup', onMouseUp);
