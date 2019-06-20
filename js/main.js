@@ -48,17 +48,17 @@ var guests = {
 };
 
 var AccommodationType = {
-  bungalo: 'Бунгало',
-  flat: 'Квартира',
-  house: 'Дом',
-  palace: 'Дворец'
+  BUNGALO: 'Бунгало',
+  FLAT: 'Квартира',
+  HOUSE: 'Дом',
+  PALACE: 'Дворец'
 };
 
 var TypePrice = {
-  'bungalo': 0,
-  'flat': 1000,
-  'house': 5000,
-  'palace': 10000
+  BUNGALO: 0,
+  FLAT: 1000,
+  HOUSE: 5000,
+  PALACE: 10000
 };
 
 var GuestsByRoom = {
@@ -293,7 +293,7 @@ var onFieldTypeChange = function (type) {
 };
 
 fieldType.addEventListener('change', function () {
-  onFieldTypeChange(fieldType.value);
+  onFieldTypeChange(fieldType.value.toUpperCase());
 });
 
 // блок по синхронизации полей со временем заезда/выезда
@@ -380,7 +380,7 @@ mainPin.addEventListener('mousedown', function (evt) {
     var xNew = mainPin.offsetLeft - shift.x;
     var yNew = mainPin.offsetTop - shift.y;
 
-    if (pinParams.WIDTH / 2 <= xNew <= searchAreaWidth - pinParams.WIDTH / 2 && yCord.MIN <= yNew <= yCord.MAX) {
+    if ((pinParams.WIDTH / 2 <= xNew <= searchAreaWidth - pinParams.WIDTH / 2) && (yCord.MIN <= yNew <= yCord.MAX)) {
       mainPin.style.left = xNew + 'px';
       mainPin.style.top = yNew + 'px';
 
@@ -405,7 +405,7 @@ mainPin.addEventListener('mousedown', function (evt) {
     var xNew = mainPin.offsetLeft - shift.x;
     var yNew = mainPin.offsetTop - shift.y;
 
-    if (pinParams.WIDTH / 2 <= xNew <= searchAreaWidth - pinParams.WIDTH / 2 && yCord.MIN <= yNew <= yCord.MAX) {
+    if ((pinParams.WIDTH / 2 <= xNew <= searchAreaWidth - pinParams.WIDTH / 2) && (yCord.MIN <= yNew <= yCord.MAX)) {
       mainPin.style.left = xNew + 'px';
       mainPin.style.top = yNew + 'px';
 
