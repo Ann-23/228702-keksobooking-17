@@ -361,8 +361,6 @@ mainPin.addEventListener('mousedown', function (evt) {
   };
 
   activatePage();
-  address.placeholder = Math.floor(mainPinX + mainPinParams.WIDTH / 2) + ', ' + Math.floor(mainPinY + mainPinParams.HEIGHT);
-  address.value = Math.floor(mainPinX + mainPinParams.WIDTH / 2) + ', ' + Math.floor(mainPinY + mainPinParams.HEIGHT);
 
   var onMouseMove = function (moveEvt) {
     moveEvt.preventDefault();
@@ -380,13 +378,31 @@ mainPin.addEventListener('mousedown', function (evt) {
     var xNew = mainPin.offsetLeft - shift.x;
     var yNew = mainPin.offsetTop - shift.y;
 
-    if ((xNew > 0) && (xNew < searchAreaWidth - pinParams.WIDTH)) {
-      mainPin.style.left = xNew + 'px';
-    }
+    var yCoordRange = {
+      min: yCord.MIN - mainPinParams.HEIGHT,
+      max: yCord.MAX - mainPinParams.HEIGHT
+    };
 
-    if (yNew > yCord.MIN && yNew < yCord.MAX) {
-      mainPin.style.top = yNew + 'px';
+    var xCoordRange = {
+      min: 0,
+      max: searchAreaWidth - pinParams.WIDTH
+    };
+
+    if (xNew < xCoordRange.min) {
+      xNew = xCoordRange.min;
     }
+    if (xNew > xCoordRange.max) {
+      xNew = xCoordRange.max;
+    }
+    mainPin.style.left = xNew + 'px';
+
+    if (yNew < yCoordRange.min) {
+      yNew = yCoordRange.min;
+    }
+    if (yNew > yCoordRange.max) {
+      yNew = yCoordRange.max;
+    }
+    mainPin.style.top = yNew + 'px';
 
     address.placeholder = Math.floor(xNew + mainPinParams.WIDTH / 2) + ', ' + Math.floor(yNew + mainPinParams.HEIGHT);
     address.value = Math.floor(xNew + mainPinParams.WIDTH / 2) + ', ' + Math.floor(yNew + mainPinParams.HEIGHT);
@@ -395,29 +411,13 @@ mainPin.addEventListener('mousedown', function (evt) {
   var onMouseUp = function (upEvt) {
     upEvt.preventDefault();
 
-    var shift = {
-      x: startCoords.x - upEvt.clientX,
-      y: startCoords.y - upEvt.clientY
-    };
-
     startCoords = {
       x: upEvt.clientX,
       y: upEvt.clientY
     };
 
-    var xNew = mainPin.offsetLeft - shift.x;
-    var yNew = mainPin.offsetTop - shift.y;
-
-    if ((xNew > 0) && (xNew < searchAreaWidth - pinParams.WIDTH)) {
-      mainPin.style.left = xNew + 'px';
-    }
-
-    if (yNew > yCord.MIN && yNew < yCord.MAX) {
-      mainPin.style.top = yNew + 'px';
-    }
-
-    address.placeholder = Math.floor(xNew + mainPinParams.WIDTH / 2) + ', ' + Math.floor(yNew + mainPinParams.HEIGHT);
-    address.value = Math.floor(xNew + mainPinParams.WIDTH / 2) + ', ' + Math.floor(yNew + mainPinParams.HEIGHT);
+    address.placeholder = Math.floor(+mainPin.style.left.split('px')[0] + mainPinParams.WIDTH / 2) + ', ' + Math.floor(+mainPin.style.top.split('px')[0] + mainPinParams.HEIGHT);
+    address.value = Math.floor(+mainPin.style.left.split('px')[0] + mainPinParams.WIDTH / 2) + ', ' + Math.floor(+mainPin.style.top.split('px')[0] + mainPinParams.HEIGHT);
 
     map.removeEventListener('mousemove', onMouseMove);
     map.removeEventListener('mouseup', onMouseUp);
