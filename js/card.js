@@ -1,12 +1,18 @@
 'use strict';
 
 (function () {
+
+  var AccommodationType = {
+    BUNGALO: 'Бунгало',
+    FLAT: 'Квартира',
+    HOUSE: 'Дом',
+    PALACE: 'Дворец'
+  };
+
   // находим шаблон карточки объявления в template
   var similarCardTemplate = document.querySelector('#card')
     .content
     .querySelector('.map__card');
-
-  var ads = window.generateAds(window.ADS_AMOUNT);
 
   // функция создания фрагмента фич для объявления
   var createFeaturesFragment = function (featuers) {
@@ -51,7 +57,7 @@
     cardPrice.textContent = ad.offer.price + ' ₽/ночь';
 
     var cardType = cardElement.querySelector('.popup__type');
-    cardType.textContent = window.AccommodationType[ad.offer.type];
+    cardType.textContent = AccommodationType[ad.offer.type];
 
     var cardGuest = cardElement.querySelector('.popup__text--capacity');
     cardGuest.textContent = ad.offer.rooms + ' комнаты для ' + ad.offer.guests + ' гостей';
@@ -71,11 +77,14 @@
     return cardElement;
   };
 
-  var createCard = function (ad) {
-    var newElement = renderCard(ad);
-    var referenceElement = document.querySelector('.map__filters-container');
-    window.map.insertBefore(newElement, referenceElement);
+  window.card = {
+    show: function (ad) {
+      var newElement = renderCard(ad);
+      var referenceElement = document.querySelector('.map__filters-container');
+      window.util.map.insertBefore(newElement, referenceElement);
+    },
+    hide: function () {}
   };
 
-  createCard(ads[0]);
+  // createCard(ads[0]);
 })();

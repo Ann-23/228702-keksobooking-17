@@ -15,14 +15,16 @@
     '100': ['0']
   };
 
+  var mainPinX = +window.util.mainPin.style.left.split('px')[0];
+  var mainPinY = +window.util.mainPin.style.top.split('px')[0];
+
   // заполняем адрес в неактивном состоянии
-  var mainPinX = +window.mainPin.style.left.split('px')[0];
-  var mainPinY = +window.mainPin.style.top.split('px')[0];
-  window.address.placeholder = Math.floor(mainPinX + window.mainPinParams.WIDTH / 2) + ', ' + Math.floor((mainPinY + window.mainPinParams.START_HEIGHT / 2));
+  window.address = window.util.adForm.querySelector('#address'); // экспорт address
+  window.address.placeholder = Math.floor(mainPinX + window.util.mainPinParams.WIDTH / 2) + ', ' + Math.floor((mainPinY + window.util.mainPinParams.START_HEIGHT / 2));
 
   // синхронизация полей тип жилья/стоимость
-  var fieldType = window.window.window.adForm.querySelector('#type');
-  var fieldPrice = window.window.window.adForm.querySelector('#price');
+  var fieldType = window.util.adForm.querySelector('#type');
+  var fieldPrice = window.util.adForm.querySelector('#price');
 
   var onFieldTypeChange = function (type) {
     fieldPrice.min = TypePrice[type];
@@ -34,8 +36,8 @@
   });
 
   // блок по синхронизации полей со временем заезда/выезда
-  var fieldTimeIn = window.window.adForm.querySelector('#timein');
-  var fieldTimeOut = window.window.adForm.querySelector('#timeout');
+  var fieldTimeIn = window.util.adForm.querySelector('#timein');
+  var fieldTimeOut = window.util.adForm.querySelector('#timeout');
 
   var onFieldTimeChange = function (field, value) {
     field.value = value;
@@ -50,24 +52,28 @@
   });
 
   // синхронизация полей количества комнат и гостей
-  var fieldRooms = window.adForm.querySelector('#room_number');
-  var fieldGuests = window.adForm.querySelector('#capacity');
+  var fieldRooms = window.util.adForm.querySelector('#room_number');
+  var fieldGuests = window.util.adForm.querySelector('#capacity');
   var optionsGuests = fieldGuests.querySelectorAll('option');
 
   var onFieldRoomsChange = function (value) {
-    var avaliableOptions = GuestsByRoom[value];
+    var availableOptions = GuestsByRoom[value];
     optionsGuests.forEach(function (option) {
-      option.disabled = avaliableOptions.indexOf(option.value) === -1;
+      option.disabled = availableOptions.indexOf(option.value) === -1;
     });
   };
 
-  var onFieldGuestsValidate = function (value) {
-    var avaliableOptions = GuestsByRoom[value];
-    if (avaliableOptions.indexOf(fieldGuests.value) === -1) {
+  var checkFieldGuestsValidity = function () {
+    onFieldRoomsChange(fieldRooms.value);
+  };
+
+  var onFieldGuestsValidity = function (value) {
+    var availableOptions = GuestsByRoom[value];
+    if (availableOptions.indexOf(fieldGuests.value) === -1) {
       fieldGuests.setCustomValidity('Укажите другое количество гостей');
     }
     fieldGuests.addEventListener('change', function () {
-      if (avaliableOptions.indexOf(fieldGuests.value) !== -1) {
+      if (availableOptions.indexOf(fieldGuests.value) !== -1) {
         fieldGuests.setCustomValidity('');
       }
     });
@@ -75,6 +81,6 @@
 
   fieldRooms.addEventListener('change', function () {
     onFieldRoomsChange(fieldRooms.value);
-    onFieldGuestsValidate(fieldRooms.value);
+    onFieldGuestsValidity(fieldRooms.value);
   });
 })();
