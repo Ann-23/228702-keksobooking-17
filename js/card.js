@@ -43,7 +43,7 @@
   };
 
   // функция вставки шаблона объявления
-  var renderCard = function (ad) {
+  window.renderCard = function (ad) {
     var cardElement = similarCardTemplate.cloneNode(true);
     cardElement.querySelector('.popup__avatar').src = ad.author.avatar;
 
@@ -76,15 +76,4 @@
 
     return cardElement;
   };
-
-  window.card = {
-    show: function (ad) {
-      var newElement = renderCard(ad);
-      var referenceElement = document.querySelector('.map__filters-container');
-      window.util.map.insertBefore(newElement, referenceElement);
-    },
-    hide: function () {}
-  };
-
-  // createCard(ads[0]);
 })();
