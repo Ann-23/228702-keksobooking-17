@@ -63,10 +63,6 @@
     });
   };
 
-  var checkFieldGuestsValidity = function () {
-    onFieldRoomsChange(fieldRooms.value);
-  };
-
   var onFieldGuestsValidity = function (value) {
     var availableOptions = GuestsByRoom[value];
     if (availableOptions.indexOf(fieldGuests.value) === -1) {
