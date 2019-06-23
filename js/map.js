@@ -3,7 +3,6 @@
 (function () {
 
   var map = document.querySelector('.map');
-  var mainPin = document.querySelector('.map__pin--main');
   var searchAreaWidth = map.clientWidth;
   var similarPins = document.querySelector('.map__pins');
 
@@ -18,15 +17,7 @@
   };
 
   // функции получения координат главного пина и их экспорт
-  window.getMainPinX = function () {
-    return +mainPin.style.left.split('px')[0];
-  };
-  window.getMainPinY = function () {
-    return +mainPin.style.top.split('px')[0];
-  };
-
-  var mainPinX = window.getMainPinX();
-  var mainPinY = window.getMainPinY();
+  var mainPinCoords = window.getMainPinCoords();
 
   // функция вызова активго состояния страницы
   var activatePage = function () {
@@ -36,7 +27,7 @@
   };
 
   // логика активации и перемещений
-  mainPin.addEventListener('mousedown', function (evt) {
+  window.util.mainPin.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
 
     var startCoords = {
@@ -59,8 +50,8 @@
         y: moveEvt.clientY
       };
 
-      var xNew = mainPin.offsetLeft - shift.x;
-      var yNew = mainPin.offsetTop - shift.y;
+      var xNew = window.util.mainPin.offsetLeft - shift.x;
+      var yNew = window.util.mainPin.offsetTop - shift.y;
 
       var yCoordRange = {
         min: yCord.MIN - window.util.mainPinParams.HEIGHT,
@@ -78,7 +69,7 @@
       if (xNew > xCoordRange.max) {
         xNew = xCoordRange.max;
       }
-      mainPin.style.left = xNew + 'px';
+      window.util.mainPin.style.left = xNew + 'px';
 
       if (yNew < yCoordRange.min) {
         yNew = yCoordRange.min;
@@ -86,7 +77,7 @@
       if (yNew > yCoordRange.max) {
         yNew = yCoordRange.max;
       }
-      mainPin.style.top = yNew + 'px';
+      window.util.mainPin.style.top = yNew + 'px';
 
       window.setAddress(xNew, yNew, window.util.mainPinParams.HEIGHT);
     };
@@ -99,7 +90,7 @@
         y: upEvt.clientY
       };
 
-      window.setAddress(mainPinX, mainPinY, window.util.mainPinParams.HEIGHT);
+      window.setAddress(mainPinCoords.mainPinX, mainPinCoords.mainPinY, window.util.mainPinParams.HEIGHT);
 
       map.removeEventListener('mousemove', onMouseMove);
       map.removeEventListener('mouseup', onMouseUp);

@@ -1,6 +1,7 @@
 'use strict';
 
 (function () {
+  var mainPin = document.querySelector('.map__pin--main');
 
   var mainPinParams = {
     WIDTH: 65,
@@ -9,6 +10,7 @@
   };
 
   window.util = {
+    mainPin: mainPin,
     mainPinParams: mainPinParams
   };
 })();

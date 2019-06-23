@@ -2,8 +2,6 @@
 
 (function () {
 
-  var mainPin = document.querySelector('.map__pin--main');
-
   var adForm = document.querySelector('.ad-form');
 
   var TypePrice = {
@@ -20,8 +18,7 @@
     '100': ['0']
   };
 
-  var mainPinX = window.getMainPinX();
-  var mainPinY = window.getMainPinY();
+  var mainPinCoords = window.getMainPinCoords();
 
   // заполняем адрес в неактивном состоянии
   var addressField = adForm.querySelector('#address');
@@ -30,7 +27,7 @@
     addressField.value = Math.floor(x + window.util.mainPinParams.WIDTH / 2) + ', ' + Math.floor((y + height));
   };
 
-  window.setAddress(mainPinX, mainPinY, window.util.mainPinParams.START_HEIGHT / 2);
+  window.setAddress(mainPinCoords.mainPinX, mainPinCoords.mainPinY, window.util.mainPinParams.START_HEIGHT / 2);
 
   // функция блокировки форм
   var adFormFieldsets = adForm.querySelectorAll('fieldset');
