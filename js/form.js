@@ -3,6 +3,9 @@
 (function () {
 
   var adForm = document.querySelector('.ad-form');
+  var adFormFields = adForm.querySelectorAll('fieldset');
+  var filtersForm = document.querySelector('.map__filters');
+  var filtersFormSelects = filtersForm.querySelectorAll('select');
 
   var TypePrice = {
     BUNGALO: 0,
@@ -18,42 +21,27 @@
     '100': ['0']
   };
 
-  var mainPinCoords = window.getMainPinCoords();
-
   // заполняем адрес в неактивном состоянии
   var addressField = adForm.querySelector('#address');
-  window.setAddress = function (x, y, height) {
-    addressField.placeholder = Math.floor(x + window.util.mainPinParams.WIDTH / 2) + ', ' + Math.floor((y + height));
-    addressField.value = Math.floor(x + window.util.mainPinParams.WIDTH / 2) + ', ' + Math.floor((y + height));
+  var setAddress = function (x, y) {
+    addressField.value = Math.floor(x) + ', ' + Math.floor(y);
   };
 
-  window.setAddress(mainPinCoords.mainPinX, mainPinCoords.mainPinY, window.util.mainPinParams.START_HEIGHT / 2);
-
-  // функция блокировки форм
-  var adFormFieldsets = adForm.querySelectorAll('fieldset');
-  var filtersForm = document.querySelector('.map__filters');
-  var filtersFormSelects = filtersForm.querySelectorAll('select');
-
-  // функция блокировки полей форм
-  var disableFields = function (form, fields) {
-    for (var i = 0; i < fields.length; i++) {
-      fields[i].disabled = true;
-    }
+    // функция блокировки полей форм
+  var disableForm = function () {
+    adForm.classList.add('ad-form--disabled');
+    window.util.disableFields(adFormFields);
+    window.util.disableFields(filtersFormSelects);
   };
 
-  disableFields(adForm, adFormFieldsets);
-  disableFields(filtersForm, filtersFormSelects);
+  disableForm();
 
   // функция разблокировки полей форм
-  var enableFields = function (form, fields) {
-    form.classList.remove('ad-form--disabled');
-    for (var i = 0; i < fields.length; i++) {
-      fields[i].disabled = false;
-    }
+  var enableForm = function () {
+    adForm.classList.remove('ad-form--disabled');
+    window.util.enableFields(adFormFields);
+    window.util.enableFields(filtersFormSelects);
   };
-
-  enableFields(adForm, adFormFieldsets);
-  enableFields(filtersForm, filtersFormSelects);
 
   // синхронизация полей тип жилья/стоимость
   var fieldType = adForm.querySelector('#type');
@@ -112,4 +100,10 @@
     onFieldRoomsChange(fieldRooms.value);
     onFieldGuestsValidity(fieldRooms.value);
   });
+
+  window.form = {
+    setAddress: setAddress,
+    disable: disableForm,
+    enable: enableForm
+  };
 })();

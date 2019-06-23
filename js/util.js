@@ -1,16 +1,20 @@
 'use strict';
 
 (function () {
-  var mainPin = document.querySelector('.map__pin--main');
+  var disableFields = function (fields) {
+    fields.forEach(function (field) {
+      field.disabled = true;
+    });
+  };
 
-  var mainPinParams = {
-    WIDTH: 65,
-    HEIGHT: 81,
-    START_HEIGHT: 65
+  var enableFields = function (fields) {
+    fields.forEach(function (field) {
+      field.disabled = false;
+    });
   };
 
   window.util = {
-    mainPin: mainPin,
-    mainPinParams: mainPinParams
+    disableFields: disableFields,
+    enableFields: enableFields
   };
 })();
