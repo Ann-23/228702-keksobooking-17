@@ -25,14 +25,12 @@
     return pinElement;
   };
 
-  var ads = window.generateAds(ADS_AMOUNT);
-
   // функция создания фрагмента для меток
-  window.createFragment = function () {
+  window.load(function (ads) {
     var fragment = document.createDocumentFragment();
-    for (var i = 0; i < ads.length; i++) {
+    for (var i = 0; i < ADS_AMOUNT; i++) {
       fragment.appendChild(renderPin(ads[i]));
     }
     return fragment;
-  };
+  });
 })();

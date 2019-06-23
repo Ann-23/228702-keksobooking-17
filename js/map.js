@@ -36,7 +36,7 @@
   var activatePage = function () {
     map.classList.remove('map--faded');
     window.form.enable();
-    similarPins.appendChild(window.createFragment());
+    similarPins.appendChild(window.load());
   };
 
   // логика активации и перемещений
