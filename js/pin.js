@@ -9,6 +9,12 @@
       .content
       .querySelector('.map__pin');
 
+  var similarErrorTemplate = document.querySelector('#error')
+      .content
+      .querySelector('.error__message');
+
+  var mainArea = document.querySelector('main');
+
   var pinParams = {
     WIDTH: 50,
     HEIGHT: 70
@@ -25,8 +31,6 @@
     return pinElement;
   };
 
-  // функция создания фрагмента для меток
-
   var successHandler = function (ads) {
     var fragment = document.createDocumentFragment();
     for (var i = 0; i < ADS_AMOUNT; i++) {
@@ -35,16 +39,9 @@
     return fragment;
   };
 
-  var errorHandler = function (errorMessage) {
-    var node = document.createElement('div');
-    node.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red;';
-    node.style.position = 'absolute';
-    node.style.left = 0;
-    node.style.right = 0;
-    node.style.fontSize = '30px';
-
-    node.textContent = errorMessage;
-    document.body.insertAdjacentElement('afterbegin', node);
+  var errorHandler = function () {
+    var errorMessage = similarErrorTemplate.cloneNode(true);
+    mainArea.appendChild(errorMessage);
   };
 
   window.load(successHandler, errorHandler);
