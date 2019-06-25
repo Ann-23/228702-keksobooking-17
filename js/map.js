@@ -8,13 +8,13 @@
   var similarPins = document.querySelector('.map__pins');
   var filtersContainer = document.querySelector('.map__filters-container');
 
-  var mainPinParams = {
+  var MainPinParams = {
     WIDTH: 65,
     HEIGHT: 81,
     START_HEIGHT: 65
   };
 
-  var yCoord = {
+  var YCoord = {
     MIN: 130,
     MAX: 630
   };
@@ -30,13 +30,22 @@
   var mainPinCoords = getMainPinCoords();
 
   // исходные координаты в поле адреса
-  window.form.setAddress(mainPinCoords.x + mainPinParams.WIDTH / 2, mainPinCoords.y + mainPinParams.START_HEIGHT / 2);
+  window.form.setAddress(mainPinCoords.x + MainPinParams.WIDTH / 2, mainPinCoords.y + MainPinParams.START_HEIGHT / 2);
+
+  var successHandler = function (data) {
+    similarPins.appendChild(window.getPinElements(data));
+  };
+
+  var errorHandler = function (errorMessage, evt) {
+    window.showError(errorMessage);
+    evt.preventDefault();
+  };
 
   // функция вызова активго состояния страницы
   var activatePage = function () {
     map.classList.remove('map--faded');
     window.form.enable();
-    similarPins.appendChild(window.load());
+    window.load(successHandler, errorHandler);
   };
 
   // логика активации и перемещений
@@ -67,13 +76,13 @@
       var yNew = mainPin.offsetTop - shift.y;
 
       var yCoordRange = {
-        min: yCoord.MIN - mainPinParams.HEIGHT,
-        max: yCoord.MAX - mainPinParams.HEIGHT
+        min: YCoord.MIN - MainPinParams.HEIGHT,
+        max: YCoord.MAX - MainPinParams.HEIGHT
       };
 
       var xCoordRange = {
         min: 0,
-        max: searchAreaWidth - mainPinParams.WIDTH
+        max: searchAreaWidth - MainPinParams.WIDTH
       };
 
       if (xNew < xCoordRange.min) {
@@ -92,7 +101,7 @@
       }
       mainPin.style.top = yNew + 'px';
 
-      window.form.setAddress(xNew + mainPinParams.WIDTH / 2, yNew + mainPinParams.HEIGHT);
+      window.form.setAddress(xNew + MainPinParams.WIDTH / 2, yNew + MainPinParams.HEIGHT);
     };
 
     var onMouseUp = function (upEvt) {
@@ -103,7 +112,7 @@
         y: upEvt.clientY
       };
 
-      window.form.setAddress(mainPinCoords.x + mainPinParams.WIDTH / 2, mainPinCoords.y + mainPinParams.HEIGHT);
+      window.form.setAddress(mainPinCoords.x + MainPinParams.WIDTH / 2, mainPinCoords.y + MainPinParams.HEIGHT);
 
       map.removeEventListener('mousemove', onMouseMove);
       map.removeEventListener('mouseup', onMouseUp);

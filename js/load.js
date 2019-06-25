@@ -2,6 +2,8 @@
 
 (function () {
   var URL = 'https://js.dump.academy/keksobooking/data';
+  var CONNECTION_ERROR = 'Произошла ошибка соединения';
+  var TIMEOUT = 10000;
 
   window.load = function (onSuccess, onError) {
     var xhr = new XMLHttpRequest();
@@ -16,13 +18,13 @@
     });
 
     xhr.addEventListener('error', function () {
-      onError('Произошла ошибка соединения');
+      onError(CONNECTION_ERROR);
     });
     xhr.addEventListener('timeout', function () {
       onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
     });
 
-    xhr.timeout = 10000; // 10s
+    xhr.timeout = TIMEOUT;
 
     xhr.open('GET', URL);
     xhr.send();
