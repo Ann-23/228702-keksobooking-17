@@ -32,8 +32,28 @@
   // исходные координаты в поле адреса
   window.form.setAddress(mainPinCoords.x + MainPinParams.WIDTH / 2, mainPinCoords.y + MainPinParams.START_HEIGHT / 2);
 
+  var addPinClickListener = function (button, data) {
+    button.addEventListener('click', function () {
+      showCard(data);
+      button.classList.add('map__pin--active');
+    });
+  };
+
+  /* var hideCard = function () {
+    var card = document.querySelector('.map__card');
+    var buttonClose = card.querySelector('.popup__close');
+    buttonClose.addEventListener('click', function () {
+      card.classList.add('hidden');
+    });
+  }; */
+
+
   var successHandler = function (data) {
     similarPins.appendChild(window.getPinElements(data));
+    var buttons = similarPins.querySelectorAll('button');
+    for (var i = 0; i < data.length; i++) {
+      addPinClickListener(buttons[i + 1], data[i]);
+    }
   };
 
   var errorHandler = function (errorMessage, evt) {
