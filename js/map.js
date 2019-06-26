@@ -56,9 +56,8 @@
     }
   };
 
-  var errorHandler = function (errorMessage, evt) {
+  var errorHandler = function (errorMessage) {
     window.showError(errorMessage);
-    evt.preventDefault();
   };
 
   // функция вызова активго состояния страницы
