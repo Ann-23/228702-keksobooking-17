@@ -7,6 +7,10 @@
   var mainPin = document.querySelector('.map__pin--main');
   var similarPins = document.querySelector('.map__pins');
   var filtersContainer = document.querySelector('.map__filters-container');
+  var similarErrorTemplate = document.querySelector('#error')
+    .content
+    .querySelector('.error');
+  var errorDisplay = similarErrorTemplate.cloneNode(true);
 
   var MainPinParams = {
     WIDTH: 65,
@@ -32,54 +36,40 @@
   // исходные координаты в поле адреса
   window.form.setAddress(mainPinCoords.x + MainPinParams.WIDTH / 2, mainPinCoords.y + MainPinParams.START_HEIGHT / 2);
 
-  var addPinClickListener = function (button, data) {
-    button.addEventListener('click', function () {
-      showCard(data);
-      button.classList.add('map__pin--active');
-    });
-  };
-
-  /* var hideCard = function () {
-    var card = document.querySelector('.map__card');
-    var buttonClose = card.querySelector('.popup__close');
-    buttonClose.addEventListener('click', function () {
-      card.classList.add('hidden');
-    });
-  }; */
-
-
   var successHandler = function (data) {
     similarPins.appendChild(window.getPinElements(data));
-    var buttons = similarPins.querySelectorAll('button');
-    for (var i = 0; i < data.length; i++) {
-      addPinClickListener(buttons[i + 1], data[i]);
-    }
   };
 
   var errorHandler = function (errorMessage) {
-    window.showError(errorMessage);
+    window.modal.showModal(errorDisplay, errorMessage);
+    window.modal.modalListener(errorDisplay);
   };
 
   // функция вызова активго состояния страницы
   var activatePage = function () {
     map.classList.remove('map--faded');
     window.form.enable();
-    window.load(successHandler, errorHandler);
+    window.backend.load(successHandler, errorHandler);
   };
 
   // логика активации и перемещений
   mainPin.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
 
-    activatePage();
-
     var startCoords = {
       x: evt.clientX,
       y: evt.clientY
     };
 
+    var activate = false;
+
     var onMouseMove = function (moveEvt) {
       moveEvt.preventDefault();
+
+      if (!activate) {
+        activatePage();
+      }
+      activate = true;
 
       var shift = {
         x: startCoords.x - moveEvt.clientX,
@@ -141,9 +131,21 @@
     map.addEventListener('mouseup', onMouseUp);
   });
 
+  var onCloseButtonClick = function (element) {
+    var buttonClose = element.querySelector('button');
+    buttonClose.addEventListener('click', function () {
+      map.removeChild(element);
+      var pins = similarPins.querySelectorAll('.map__pin--active');
+      for (var i = 0; i < pins.length; i++) {
+        pins[i].classList.remove('map__pin--active');
+      }
+    });
+  };
+
   var showCard = function (ad) {
     var cardElement = window.renderCard(ad);
     map.insertBefore(cardElement, filtersContainer);
+    onCloseButtonClick(cardElement);
   };
 
   window.map = {

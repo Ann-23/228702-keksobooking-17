@@ -6,6 +6,10 @@
   var adFormFields = adForm.querySelectorAll('fieldset');
   var filtersForm = document.querySelector('.map__filters');
   var filtersFormSelects = filtersForm.querySelectorAll('select');
+  var similarSuccessTemplate = document.querySelector('#success')
+    .content
+    .querySelector('.success');
+  var successDisplay = similarSuccessTemplate.cloneNode(true);
 
   var TypePrice = {
     BUNGALO: 0,
@@ -99,6 +103,11 @@
   fieldRooms.addEventListener('change', function () {
     onFieldRoomsChange(fieldRooms.value);
     onFieldGuestsValidity(fieldRooms.value);
+  });
+
+  adForm.addEventListener('submit', function (evt) {
+    evt.preventDefault();
+    window.upload(new FormData(adForm), window.modal.showModal(successDisplay));
   });
 
   window.form = {

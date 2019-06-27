@@ -15,6 +15,10 @@
   // функция вставки шаблона метки
   var renderPin = function (ad) {
     var pinElement = similarPinTemplate.cloneNode(true);
+    pinElement.addEventListener('click', function () {
+      window.map.showCard(ad);
+      pinElement.classList.add('map__pin--active');
+    });
     pinElement.style.left = ad.location.x - PinParams.WIDTH / 2 + 'px';
     pinElement.style.top = ad.location.y - PinParams.HEIGHT + 'px';
     pinElement.querySelector('img').src = ad.author.avatar;
