@@ -7,10 +7,6 @@
   var mainPin = document.querySelector('.map__pin--main');
   var similarPins = document.querySelector('.map__pins');
   var filtersContainer = document.querySelector('.map__filters-container');
-  var similarErrorTemplate = document.querySelector('#error')
-    .content
-    .querySelector('.error');
-  var errorDisplay = similarErrorTemplate.cloneNode(true);
 
   var MainPinParams = {
     WIDTH: 65,
@@ -41,8 +37,7 @@
   };
 
   var errorHandler = function (errorMessage) {
-    window.modal.showModal(errorDisplay, errorMessage);
-    window.modal.modalListener(errorDisplay);
+    window.modal.showModal(errorMessage);
   };
 
   // функция вызова активго состояния страницы
@@ -51,6 +46,25 @@
     window.form.enable();
     window.backend.load(successHandler, errorHandler);
   };
+
+  // функция вызова нективного состояния страницы
+  var deactivatePage = function (form) {
+    map.classList.add('map--faded');
+
+    var pins = similarPins.querySelectorAll('.map__pin');
+    for (var i = 1; i < pins.length; i++) {
+      pins[i].remove();
+    }
+
+    (document.querySelector('article')).remove();
+
+    window.form.disable();
+
+    form.reset();
+  };
+
+  // флаг для активации страницы по первому перемещению
+  var isActivate = false;
 
   // логика активации и перемещений
   mainPin.addEventListener('mousedown', function (evt) {
@@ -61,15 +75,13 @@
       y: evt.clientY
     };
 
-    var activate = false;
-
     var onMouseMove = function (moveEvt) {
       moveEvt.preventDefault();
 
-      if (!activate) {
+      if (!isActivate) {
         activatePage();
+        isActivate = true;
       }
-      activate = true;
 
       var shift = {
         x: startCoords.x - moveEvt.clientX,
@@ -149,6 +161,7 @@
   };
 
   window.map = {
-    showCard: showCard
+    showCard: showCard,
+    deactivatePage: deactivatePage
   };
 })();
