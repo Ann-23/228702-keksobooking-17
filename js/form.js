@@ -6,6 +6,7 @@
   var adFormFields = adForm.querySelectorAll('fieldset');
   var filtersForm = document.querySelector('.map__filters');
   var filtersFormSelects = filtersForm.querySelectorAll('select');
+  var resetButton = adForm.querySelector('.ad-form__reset');
 
   var TypePrice = {
     BUNGALO: 0,
@@ -109,6 +110,12 @@
     evt.preventDefault();
     window.map.deactivatePage(adForm);
     window.upload(new FormData(adForm), modalHandler(), modalHandler());
+  });
+
+  // сброс по кнопке "резет"
+  resetButton.addEventListener('click', function (evt) {
+    evt.preventDefault();
+    window.map.deactivatePage(adForm);
   });
 
   window.form = {
