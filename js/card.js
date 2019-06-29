@@ -15,12 +15,12 @@
     .querySelector('.map__card');
 
   // функция создания фрагмента фич для объявления
-  var createFeaturesFragment = function (featuers) {
+  var createFeaturesFragment = function (features) {
     var fragment = document.createDocumentFragment();
-    for (var i = 0; i < featuers.length; i++) {
+    for (var i = 0; i < features.length; i++) {
       var featureElement = document.createElement('li');
       featureElement.classList.add('popup__feature');
-      var dopClass = 'popup__feature--' + featuers[i];
+      var dopClass = 'popup__feature--' + features[i];
       featureElement.classList.add(dopClass);
       fragment.appendChild(featureElement);
     }
@@ -43,7 +43,7 @@
   };
 
   // функция вставки шаблона объявления
-  window.renderCard = function (ad) {
+  var renderCard = function (ad) {
     var cardElement = similarCardTemplate.cloneNode(true);
     cardElement.querySelector('.popup__avatar').src = ad.author.avatar;
 
@@ -65,8 +65,8 @@
     var cardTime = cardElement.querySelector('.popup__text--time');
     cardTime.textContent = 'Заезд после ' + ad.offer.checkin + ', выезд до ' + ad.offer.checkout;
 
-    var cardFeatuers = cardElement.querySelector('.popup__features');
-    cardFeatuers.appendChild(createFeaturesFragment(ad.offer.features));
+    var cardFeatures = cardElement.querySelector('.popup__features');
+    cardFeatures.appendChild(createFeaturesFragment(ad.offer.features));
 
     var cardDescription = cardElement.querySelector('.popup__description');
     cardDescription.textContent = ad.offer.description;
@@ -74,6 +74,28 @@
     var cardPhotos = cardElement.querySelector('.popup__photos');
     cardPhotos.appendChild(createPhotosFragment(ad.offer.photos));
 
+    var buttonClose = cardElement.querySelector('button');
+    buttonClose.addEventListener('click', function () {
+      onCloseButtonClick();
+    });
+
     return cardElement;
+  };
+
+  var removeCard = function () {
+    var card = document.querySelector('.map__card');
+    if (card) {
+      card.remove();
+    }
+  };
+
+  var onCloseButtonClick = function () {
+    removeCard();
+    window.pin.deactivate();
+  };
+
+  window.card = {
+    render: renderCard,
+    remove: onCloseButtonClick,
   };
 })();

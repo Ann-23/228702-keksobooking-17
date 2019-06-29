@@ -2,12 +2,6 @@
 
 (function () {
 
-  var adForm = document.querySelector('.ad-form');
-  var adFormFields = adForm.querySelectorAll('fieldset');
-  var filtersForm = document.querySelector('.map__filters');
-  var filtersFormSelects = filtersForm.querySelectorAll('select');
-  var resetButton = adForm.querySelector('.ad-form__reset');
-
   var TypePrice = {
     BUNGALO: 0,
     FLAT: 1000,
@@ -22,17 +16,25 @@
     '100': ['0']
   };
 
-  // заполняем адрес в неактивном состоянии
+  var adForm = document.querySelector('.ad-form');
+  var adFormFields = adForm.querySelectorAll('fieldset');
+  var resetButton = adForm.querySelector('.ad-form__reset');
   var addressField = adForm.querySelector('#address');
+  var fieldType = adForm.querySelector('#type');
+  var fieldPrice = adForm.querySelector('#price');
+  var fieldRooms = adForm.querySelector('#room_number');
+  var fieldGuests = adForm.querySelector('#capacity');
+  var optionsGuests = fieldGuests.querySelectorAll('option');
+
+  // заполняем адрес в неактивном состоянии
   var setAddress = function (x, y) {
     addressField.value = Math.floor(x) + ', ' + Math.floor(y);
   };
 
-    // функция блокировки полей форм
+  // функция блокировки полей форм
   var disableForm = function () {
     adForm.classList.add('ad-form--disabled');
     window.util.disableFields(adFormFields);
-    window.util.disableFields(filtersFormSelects);
   };
 
   disableForm();
@@ -41,13 +43,9 @@
   var enableForm = function () {
     adForm.classList.remove('ad-form--disabled');
     window.util.enableFields(adFormFields);
-    window.util.enableFields(filtersFormSelects);
   };
 
   // синхронизация полей тип жилья/стоимость
-  var fieldType = adForm.querySelector('#type');
-  var fieldPrice = adForm.querySelector('#price');
-
   var onFieldTypeChange = function (type) {
     fieldPrice.min = TypePrice[type];
     fieldPrice.placeholder = TypePrice[type];
@@ -74,10 +72,6 @@
   });
 
   // синхронизация полей количества комнат и гостей
-  var fieldRooms = adForm.querySelector('#room_number');
-  var fieldGuests = adForm.querySelector('#capacity');
-  var optionsGuests = fieldGuests.querySelectorAll('option');
-
   var onFieldRoomsChange = function (value) {
     var availableOptions = GuestsByRoom[value];
     optionsGuests.forEach(function (option) {
@@ -102,25 +96,33 @@
     onFieldGuestsValidity(fieldRooms.value);
   });
 
-  var modalHandler = function (errorMessage) {
+  var onSuccess = function () {
+    window.page.deactivate();
+    window.modal.showModal();
+  };
+
+  var onError = function (errorMessage) {
     window.modal.showModal(errorMessage);
   };
 
   adForm.addEventListener('submit', function (evt) {
     evt.preventDefault();
-    window.map.deactivatePage(adForm);
-    window.upload(new FormData(adForm), modalHandler(), modalHandler());
+    window.backend.upload(new FormData(adForm), onSuccess, onError);
   });
 
   // сброс по кнопке "резет"
-  resetButton.addEventListener('click', function (evt) {
-    evt.preventDefault();
-    window.map.deactivatePage(adForm);
+  var resetForm = function () {
+    disableForm();
+    adForm.reset();
+  };
+
+  resetButton.addEventListener('click', function () {
+    window.page.deactivate();
   });
 
   window.form = {
     setAddress: setAddress,
-    disable: disableForm,
-    enable: enableForm
+    init: enableForm,
+    reset: resetForm
   };
 })();

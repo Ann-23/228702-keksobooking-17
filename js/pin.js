@@ -12,21 +12,7 @@
     HEIGHT: 70
   };
 
-  // функция показа карточек
-  var pinListener = function (element, ad) {
-    element.addEventListener('click', function () {
-      var card = document.querySelector('article');
-      if (card) {
-        card.remove();
-      }
-      var pinActive = document.querySelector('.map__pin--active');
-      if (pinActive) {
-        pinActive.classList.remove('map__pin--active');
-      }
-      element.classList.add('map__pin--active');
-      window.map.showCard(ad);
-    });
-  };
+  var pins = [];
 
   // функция вставки шаблона метки
   var renderPin = function (ad) {
@@ -42,11 +28,45 @@
   };
 
   // функция создания фрагмента для меток
-  window.getPinElements = function (ads) {
+  var getPinElements = function (ads) {
     var fragment = document.createDocumentFragment();
     for (var i = 0; i < ads.length; i++) {
-      fragment.appendChild(renderPin(ads[i]));
+      var pin = renderPin(ads[i]);
+      pins.push(pin);
+      fragment.appendChild(pin);
     }
     return fragment;
+  };
+
+  // функция удаления пинов
+  var removePinElements = function () {
+    pins.forEach(function (pin) {
+      pin.remove();
+    });
+    pins = [];
+  };
+
+  // функция снятия класса активного пина
+  var deactivatePin = function () {
+    var pinActive = document.querySelector('.map__pin--active');
+    if (pinActive) {
+      pinActive.classList.remove('map__pin--active');
+    }
+  };
+
+  // функция переключения карточек
+  var pinListener = function (element, ad) {
+    element.addEventListener('click', function () {
+      window.card.remove();
+      deactivatePin();
+      element.classList.add('map__pin--active');
+      window.map.showCard(ad);
+    });
+  };
+
+  window.pin = {
+    getElements: getPinElements,
+    removeElements: removePinElements,
+    deactivate: deactivatePin
   };
 })();

@@ -5,14 +5,14 @@
   var URL_UPLOAD = 'https://js.dump.academy/keksobooking';
   var CONNECTION_ERROR = 'Произошла ошибка соединения';
   var TIMEOUT = 10000;
-  var XNR_STATUS = 200;
+  var SUCCESS_STATUS = 200;
 
   var createRequest = function (onSuccess, onError) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
 
     xhr.addEventListener('load', function () {
-      if (xhr.status === XNR_STATUS) {
+      if (xhr.status === SUCCESS_STATUS) {
         onSuccess(xhr.response);
       } else {
         onError('Статус ответа: ' + xhr.status + ' ' + xhr.statusText);
