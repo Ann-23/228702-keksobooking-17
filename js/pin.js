@@ -2,37 +2,71 @@
 
 (function () {
 
-  var ADS_AMOUNT = 8;
-
   // находим шаблон меток в template
   var similarPinTemplate = document.querySelector('#pin')
       .content
       .querySelector('.map__pin');
 
-  var pinParams = {
+  var PinParams = {
     WIDTH: 50,
     HEIGHT: 70
   };
 
+  var pins = [];
+
   // функция вставки шаблона метки
   var renderPin = function (ad) {
     var pinElement = similarPinTemplate.cloneNode(true);
-    pinElement.style.left = ad.location.x - pinParams.WIDTH / 2 + 'px';
-    pinElement.style.top = ad.location.y - pinParams.HEIGHT + 'px';
+    pinElement.style.left = ad.location.x - PinParams.WIDTH / 2 + 'px';
+    pinElement.style.top = ad.location.y - PinParams.HEIGHT + 'px';
     pinElement.querySelector('img').src = ad.author.avatar;
     pinElement.querySelector('img').alt = ad.offer.title;
+
+    pinListener(pinElement, ad);
 
     return pinElement;
   };
 
-  var ads = window.generateAds(ADS_AMOUNT);
-
   // функция создания фрагмента для меток
-  window.createFragment = function () {
+  var getPinElements = function (ads) {
     var fragment = document.createDocumentFragment();
     for (var i = 0; i < ads.length; i++) {
-      fragment.appendChild(renderPin(ads[i]));
+      var pin = renderPin(ads[i]);
+      pins.push(pin);
+      fragment.appendChild(pin);
     }
     return fragment;
+  };
+
+  // функция удаления пинов
+  var removePinElements = function () {
+    pins.forEach(function (pin) {
+      pin.remove();
+    });
+    pins = [];
+  };
+
+  // функция снятия класса активного пина
+  var deactivatePin = function () {
+    var pinActive = document.querySelector('.map__pin--active');
+    if (pinActive) {
+      pinActive.classList.remove('map__pin--active');
+    }
+  };
+
+  // функция переключения карточек
+  var pinListener = function (element, ad) {
+    element.addEventListener('click', function () {
+      window.card.remove();
+      deactivatePin();
+      element.classList.add('map__pin--active');
+      window.map.showCard(ad);
+    });
+  };
+
+  window.pin = {
+    getElements: getPinElements,
+    removeElements: removePinElements,
+    deactivate: deactivatePin
   };
 })();
