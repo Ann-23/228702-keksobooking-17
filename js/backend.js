@@ -1,8 +1,11 @@
 'use strict';
 
 (function () {
-  var URL_LOAD = 'https://js.dump.academy/keksobooking/data';
-  var URL_UPLOAD = 'https://js.dump.academy/keksobooking';
+  var Url = {
+    LOAD: 'https://js.dump.academy/keksobooking/data',
+    UPLOAD: 'https://js.dump.academy/keksobooking'
+  };
+
   var CONNECTION_ERROR = 'Произошла ошибка соединения';
   var TIMEOUT = 10000;
   var SUCCESS_STATUS = 200;
@@ -34,14 +37,14 @@
   var load = function (onSuccess, onError) {
     var xhr = createRequest(onSuccess, onError);
 
-    xhr.open('GET', URL_LOAD);
+    xhr.open('GET', Url.LOAD);
     xhr.send();
   };
 
   var upload = function (data, onSuccess, onError) {
     var xhr = createRequest(onSuccess, onError);
 
-    xhr.open('POST', URL_UPLOAD);
+    xhr.open('POST', Url.UPLOAD);
     xhr.send(data);
   };
 

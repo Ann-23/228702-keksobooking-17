@@ -13,6 +13,7 @@
   };
 
   var pins = [];
+  var ADS_LIMITER = 5;
 
   // функция вставки шаблона метки
   var renderPin = function (ad) {
@@ -30,7 +31,7 @@
   // функция создания фрагмента для меток
   var getPinElements = function (ads) {
     var fragment = document.createDocumentFragment();
-    for (var i = 0; i < ads.length; i++) {
+    for (var i = 0; i < ADS_LIMITER; i++) {
       var pin = renderPin(ads[i]);
       pins.push(pin);
       fragment.appendChild(pin);

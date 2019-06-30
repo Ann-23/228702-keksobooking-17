@@ -10,10 +10,14 @@
   var filtersForm = filtersContainer.querySelector('.map__filters');
   var filtersFormSelects = filtersForm.querySelectorAll('select');
 
+  // переменная для данных с сервера
+  var serverData = [];
+
   window.mainPin.initMainPin();
 
   var successHandler = function (data) {
-    similarPins.appendChild(window.pin.getElements(data));
+    serverData = data;
+    similarPins.appendChild(window.filters.updatePins(serverData));
   };
 
   var errorHandler = function (errorMessage) {

@@ -25,6 +25,8 @@
   var fieldRooms = adForm.querySelector('#room_number');
   var fieldGuests = adForm.querySelector('#capacity');
   var optionsGuests = fieldGuests.querySelectorAll('option');
+  var fieldTimeIn = adForm.querySelector('#timein');
+  var fieldTimeOut = adForm.querySelector('#timeout');
 
   // заполняем адрес в неактивном состоянии
   var setAddress = function (x, y) {
@@ -56,9 +58,6 @@
   });
 
   // блок по синхронизации полей со временем заезда/выезда
-  var fieldTimeIn = adForm.querySelector('#timein');
-  var fieldTimeOut = adForm.querySelector('#timeout');
-
   var onFieldTimeChange = function (field, value) {
     field.value = value;
   };

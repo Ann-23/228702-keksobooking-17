@@ -29,7 +29,7 @@
 
   var mainPin = document.querySelector('.map__pin--main');
 
-  // функции получения координат главного пина
+  // функция получения координат главного пина
   var getMainPinCoords = function () {
     return {
       x: +mainPin.style.left.split('px')[0],

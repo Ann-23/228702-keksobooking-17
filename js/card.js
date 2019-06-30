@@ -96,6 +96,6 @@
 
   window.card = {
     render: renderCard,
-    remove: onCloseButtonClick,
+    remove: onCloseButtonClick
   };
 })();
