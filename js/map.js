@@ -4,20 +4,15 @@
 
   var map = document.querySelector('.map');
 
-  var similarPins = document.querySelector('.map__pins');
-
   var filtersContainer = document.querySelector('.map__filters-container');
   var filtersForm = filtersContainer.querySelector('.map__filters');
   var filtersFormSelects = filtersForm.querySelectorAll('select');
 
-  // переменная для данных с сервера
-  var serverData = [];
-
   window.mainPin.initMainPin();
 
-  var successHandler = function (data) {
-    serverData = data;
-    similarPins.appendChild(window.filters.updatePins(serverData));
+  var successHandler = function (ads) {
+    window.pin.showPins(ads);
+    window.filters.initFilters(ads);
   };
 
   var errorHandler = function (errorMessage) {
