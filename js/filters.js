@@ -10,15 +10,16 @@
     initialAds = ads;
     filteredAds = ads;
 
-    houseFilter.addEventListener('click', function (evt) {
+    houseFilter.addEventListener('change', function (evt) {
       var type = evt.target.value;
       filterPinsByType(type);
     });
   };
 
   var filterPinsByType = function (type) {
+    var newAds;
     if (type === 'any') {
-      var newAds = filteredAds;
+      newAds = initialAds;
     } else {
       newAds = filteredAds.filter(function (it) {
         return it.offer.type === type;

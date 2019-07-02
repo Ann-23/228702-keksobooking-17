@@ -98,8 +98,6 @@
 
       window.page.activate();
 
-      startCoords = new StartCoords(upEvt.clientX, upEvt.clientY);
-
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
     };
