@@ -2,15 +2,18 @@
 
 (function () {
 
-  // находим шаблон меток в template
-  var similarPinTemplate = document.querySelector('#pin')
-      .content
-      .querySelector('.map__pin');
-
   var PinParams = {
     WIDTH: 50,
     HEIGHT: 70
   };
+
+  var ADS_LIMIT = 5;
+
+  var similarPins = document.querySelector('.map__pins');
+
+  var similarPinTemplate = document.querySelector('#pin')
+      .content
+      .querySelector('.map__pin');
 
   var pins = [];
 
@@ -30,10 +33,13 @@
   // функция создания фрагмента для меток
   var getPinElements = function (ads) {
     var fragment = document.createDocumentFragment();
-    for (var i = 0; i < ads.length; i++) {
-      var pin = renderPin(ads[i]);
-      pins.push(pin);
-      fragment.appendChild(pin);
+    var amount = ads.length < ADS_LIMIT ? ads.length : ADS_LIMIT;
+    for (var i = 0; i < amount; i++) {
+      if ('offer' in ads[i]) {
+        var pin = renderPin(ads[i]);
+        pins.push(pin);
+        fragment.appendChild(pin);
+      }
     }
     return fragment;
   };
@@ -44,6 +50,11 @@
       pin.remove();
     });
     pins = [];
+  };
+
+  var showPins = function (ads) {
+    removePinElements();
+    similarPins.appendChild(getPinElements(ads));
   };
 
   // функция снятия класса активного пина
@@ -65,7 +76,7 @@
   };
 
   window.pin = {
-    getElements: getPinElements,
+    showPins: showPins,
     removeElements: removePinElements,
     deactivate: deactivatePin
   };

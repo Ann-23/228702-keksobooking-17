@@ -29,7 +29,7 @@
 
   var mainPin = document.querySelector('.map__pin--main');
 
-  // функции получения координат главного пина
+  // функция получения координат главного пина
   var getMainPinCoords = function () {
     return {
       x: +mainPin.style.left.split('px')[0],
@@ -49,14 +49,17 @@
     window.form.setAddress(pinInitCoord.x + MainPinParams.WIDTH / 2, pinInitCoord.y + MainPinParams.START_HEIGHT / 2);
   };
 
+  // функция-конструктор координат отсчёта
+  var StartCoords = function (x, y) {
+    this.x = x;
+    this.y = y;
+  };
+
   // логика активации и перемещений
   mainPin.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
 
-    var startCoords = {
-      x: evt.clientX,
-      y: evt.clientY
-    };
+    var startCoords = new StartCoords(evt.clientX, evt.clientY);
 
     var onMouseMove = function (moveEvt) {
       moveEvt.preventDefault();
@@ -66,10 +69,7 @@
         y: startCoords.y - moveEvt.clientY
       };
 
-      startCoords = {
-        x: moveEvt.clientX,
-        y: moveEvt.clientY
-      };
+      startCoords = new StartCoords(moveEvt.clientX, moveEvt.clientY);
 
       var xNew = mainPin.offsetLeft - shift.x;
       var yNew = mainPin.offsetTop - shift.y;
@@ -97,11 +97,6 @@
       upEvt.preventDefault();
 
       window.page.activate();
-
-      startCoords = {
-        x: upEvt.clientX,
-        y: upEvt.clientY
-      };
 
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
