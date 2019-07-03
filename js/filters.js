@@ -4,25 +4,61 @@
 
   var initialAds;
   var filteredAds;
-  var houseFilter = document.querySelector('#housing-type');
+  var typeFilter = document.querySelector('#housing-type');
+  var roomsFilter = document.querySelector('#housing-rooms');
+  var guestsFilter = document.querySelector('#housing-guests');
 
   var initFilters = function (ads) {
     initialAds = ads;
     filteredAds = ads;
 
-    houseFilter.addEventListener('change', function (evt) {
+    typeFilter.addEventListener('change', function (evt) {
       var type = evt.target.value;
       filterPinsByType(type);
     });
+
+    roomsFilter.addEventListener('change', function (evt) {
+      var type = evt.target.value;
+      filterPinsByRooms(type);
+    });
+
+    guestsFilter.addEventListener('change', function (evt) {
+      var value = evt.target.value;
+      filterPinsByGuests(value);
+    });
   };
 
-  var filterPinsByType = function (type) {
+  var filterPinsByType = function (value) {
     var newAds;
-    if (type === 'any') {
+    if (value === 'any') {
       newAds = initialAds;
     } else {
       newAds = filteredAds.filter(function (it) {
-        return it.offer.type === type;
+        return it.offer.type === value;
+      });
+    }
+    window.pin.showPins(newAds);
+  };
+
+  var filterPinsByRooms = function (value) {
+    var newAds;
+    if (value === 'any') {
+      newAds = initialAds;
+    } else {
+      newAds = filteredAds.filter(function (it) {
+        return it.offer.rooms === +value;
+      });
+    }
+    window.pin.showPins(newAds);
+  };
+
+  var filterPinsByGuests = function (value) {
+    var newAds;
+    if (value === 'any') {
+      newAds = initialAds;
+    } else {
+      newAds = filteredAds.filter(function (it) {
+        return it.offer.guests === +value;
       });
     }
     window.pin.showPins(newAds);
