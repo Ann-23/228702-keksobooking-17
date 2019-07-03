@@ -48,19 +48,12 @@
     }
   };
 
-  var checkDataAbsence = function (key, ad, element) {
-    if (key in ad) {
-      element.classList.add('visually-hidden');
-    }
-  };
-
   // функция вставки шаблона объявления
   var renderCard = function (ad) {
     var cardElement = similarCardTemplate.cloneNode(true);
 
     var cardAvatar = cardElement.querySelector('.popup__avatar');
     cardAvatar.src = ad.author.avatar;
-    checkDataAbsence('author', ad, cardAvatar);
     checkEmptyValue(ad.author.avatar, cardAvatar);
 
     var cardTitle = cardElement.querySelector('.popup__title');
