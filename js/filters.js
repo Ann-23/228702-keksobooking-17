@@ -13,7 +13,8 @@
   var roomsFilter = document.querySelector('#housing-rooms');
   var guestsFilter = document.querySelector('#housing-guests');
   var priceFilter = document.querySelector('#housing-price');
-  var featuresFilter = document.querySelectorAll('input[type=checkbox]');
+  var mapFeatures = document.querySelector('.map__features');
+  var featuresFilter = mapFeatures.querySelectorAll('input[type=checkbox]');
 
   var initFilters = function (ads) {
     initialAds = ads;
@@ -39,7 +40,7 @@
       filterPinsByPrice(value);
     });
 
-    filterPinsByFeatures(ads, getCheckedFeatures());
+    filterPinsByFeatures(getCheckedFeatures());
   };
 
   var filterPinsByType = function (value) {
@@ -112,14 +113,21 @@
     }
   };
 
-  var filterPinsByFeatures = function (ads, features) {
-    var newAds = [];
-    for (var i = 0; i < features.length; i++) {
-      var pinsArr = ads[i].offer.features;
-      if (pinsArr.indexOf(features[i]) !== -1) {
-        newAds.push(ads[i]);
+  // отфильтруй из объявлений те, у которых массив ads.offer.features
+  // содержит все элементы массива чекнутых фич-чекбоксов
+
+  var filterPinsByFeatures = function (features) {
+    var newAds;
+    newAds = filteredAds.filter(function (it) {
+      var pinsFeatures = it.offer.features;
+      if (pinsFeatures.length !== 0) {
+        console.log(pinsFeatures);
+        for (var i = 0; i < features.length; i++) {
+          return pinsFeatures.indexOf(features[i]) !== -1
+        }
       }
-    }
+      console.log(newAds);
+    });
     window.pin.showPins(newAds);
   };
 
@@ -133,6 +141,8 @@
     }
     return checkedFeatures;
   };
+
+  console.log(getCheckedFeatures());
 
   window.filters = {
     initFilters: initFilters
