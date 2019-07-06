@@ -9,12 +9,18 @@
 
   var initialAds;
   var filteredAds;
+  var newAds;
   var typeFilter = document.querySelector('#housing-type');
   var roomsFilter = document.querySelector('#housing-rooms');
   var guestsFilter = document.querySelector('#housing-guests');
   var priceFilter = document.querySelector('#housing-price');
   var mapFeatures = document.querySelector('.map__features');
-  var featuresFilter = mapFeatures.querySelectorAll('input[type=checkbox]');
+  var filterWifi = mapFeatures.querySelector('#filter-wifi');
+  var filterDishwasher = mapFeatures.querySelector('#filter-dishwasher');
+  var filterParking = mapFeatures.querySelector('#filter-parking');
+  var filterWasher = mapFeatures.querySelector('#filter-washer');
+  var filterElevator = mapFeatures.querySelector('#filter-elevator');
+  var filterConditioner = mapFeatures.querySelector('#filter-conditioner');
 
   var initFilters = function (ads) {
     initialAds = ads;
@@ -40,11 +46,38 @@
       filterPinsByPrice(value);
     });
 
-    filterPinsByFeatures(getCheckedFeatures());
+    filterWifi.addEventListener('change', function (evt) {
+      var value = evt.target.value;
+      filterPinsByFeatures(value);
+    });
+
+    filterDishwasher.addEventListener('change', function (evt) {
+      var value = evt.target.value;
+      filterPinsByFeatures(value);
+    });
+
+    filterParking.addEventListener('change', function (evt) {
+      var value = evt.target.value;
+      filterPinsByFeatures(value);
+    });
+
+    filterWasher.addEventListener('change', function (evt) {
+      var value = evt.target.value;
+      filterPinsByFeatures(value);
+    });
+
+    filterElevator.addEventListener('change', function (evt) {
+      var value = evt.target.value;
+      filterPinsByFeatures(value);
+    });
+
+    filterConditioner.addEventListener('change', function (evt) {
+      var value = evt.target.value;
+      filterPinsByFeatures(value);
+    });
   };
 
   var filterPinsByType = function (value) {
-    var newAds;
     if (value === 'any') {
       newAds = initialAds;
     } else {
@@ -56,7 +89,6 @@
   };
 
   var filterPinsByRooms = function (value) {
-    var newAds;
     if (value === 'any') {
       newAds = initialAds;
     } else {
@@ -68,7 +100,6 @@
   };
 
   var filterPinsByGuests = function (value) {
-    var newAds;
     if (value === 'any') {
       newAds = initialAds;
     } else {
@@ -80,7 +111,6 @@
   };
 
   var filterPinsByPrice = function (value) {
-    var newAds;
     if (value === 'any') {
       newAds = initialAds;
     } else {
@@ -113,36 +143,13 @@
     }
   };
 
-  // отфильтруй из объявлений те, у которых массив ads.offer.features
-  // содержит все элементы массива чекнутых фич-чекбоксов
-
-  var filterPinsByFeatures = function (features) {
-    var newAds;
+  var filterPinsByFeatures = function (value) {
     newAds = filteredAds.filter(function (it) {
       var pinsFeatures = it.offer.features;
-      if (pinsFeatures.length !== 0) {
-        console.log(pinsFeatures);
-        for (var i = 0; i < features.length; i++) {
-          return pinsFeatures.indexOf(features[i]) !== -1
-        }
-      }
-      console.log(newAds);
+      return pinsFeatures.indexOf(value) !== -1;
     });
     window.pin.showPins(newAds);
   };
-
-  var getCheckedFeatures = function () {
-    for (var i = 0; i < featuresFilter.length; i++) {
-      var checkedFeatures = [];
-      featuresFilter[i].addEventListener('change', function (evt) {
-        var value = evt.target.value;
-        checkedFeatures.push(value);
-      });
-    }
-    return checkedFeatures;
-  };
-
-  console.log(getCheckedFeatures());
 
   window.filters = {
     initFilters: initFilters
