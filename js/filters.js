@@ -15,132 +15,145 @@
   var guestsFilter = document.querySelector('#housing-guests');
   var priceFilter = document.querySelector('#housing-price');
   var mapFeatures = document.querySelector('.map__features');
-  var filterWifi = mapFeatures.querySelector('#filter-wifi');
-  var filterDishwasher = mapFeatures.querySelector('#filter-dishwasher');
-  var filterParking = mapFeatures.querySelector('#filter-parking');
-  var filterWasher = mapFeatures.querySelector('#filter-washer');
-  var filterElevator = mapFeatures.querySelector('#filter-elevator');
-  var filterConditioner = mapFeatures.querySelector('#filter-conditioner');
-
-  var filtersState = {
-    typeFilter: typeFilter.value,
-    roomsFilter: roomsFilter.value,
-    guestsFilter: guestsFilter.value,
-    priceFilter: priceFilter.value
-  };
 
   var initFilters = function (ads) {
     initialAds = ads;
     filteredAds = ads;
 
-    var filterPinsByType = function (value) {
-      if (value === 'any') {
-        newAds = initialAds;
-      } else {
-        newAds = filteredAds.filter(function (it) {
-          return it.offer.type === value;
-        });
+    typeFilter.addEventListener('change', onFilterChange);
+    roomsFilter.addEventListener('change', onFilterChange);
+    guestsFilter.addEventListener('change', onFilterChange);
+    priceFilter.addEventListener('change', onFilterChange);
+    mapFeatures.addEventListener('change', onFilterChange);
+
+    window.pin.showPins(initialAds);
+  };
+
+  var filtersState = {
+    'housing-type': 'any',
+    'housing-rooms': 'any',
+    'housing-guests': 'any',
+    'housing-price': 'any',
+    'features': []
+  };
+
+  var onFilterChange = function (evt) {
+    var name = evt.target.name;
+    var value = evt.target.value;
+
+    if (name === 'features') {
+      var checkboxes = mapFeatures.querySelectorAll('input[type=checkbox]:checked');
+      filtersState[name] = [];
+      for (var i = 0; i < checkboxes.length; i++) {
+        filtersState[name].push(checkboxes[i].value);
       }
-      return newAds;
-    };
+    } else {
+      filtersState[name] = value;
+    }
 
-    filteredAds = filterPinsByType(filtersState.typeFilter);
+    window.card.remove();
+    filterAds();
+  };
 
-    var filterPinsByRooms = function (value) {
-      if (value === 'any') {
-        newAds = initialAds;
-      } else {
-        newAds = filteredAds.filter(function (it) {
-          return it.offer.rooms === +value;
-        });
-      }
-      return newAds;
-    };
+  var filterAds = function () {
+    filteredAds = initialAds;
 
-    filteredAds = filterPinsByRooms(filtersState.roomsFilter);
-
-    var filterPinsByGuests = function (value) {
-      if (value === 'any') {
-        newAds = initialAds;
-      } else {
-        newAds = filteredAds.filter(function (it) {
-          return it.offer.guests === +value;
-        });
-      }
-      return newAds;
-    };
-
-    filteredAds = filterPinsByGuests(filtersState.guestsFilter);
-
-    var filterPinsByPrice = function (value) {
-      if (value === 'any') {
-        newAds = initialAds;
-      } else {
-        newAds = filteredAds.filter(function (it) {
-          var valuePrice;
-          if (checkPrice.low(it.offer.price)) {
-            valuePrice = 'low';
-          }
-          if (checkPrice.high(it.offer.price)) {
-            valuePrice = 'high';
-          }
-          if (checkPrice.middle(it.offer.price)) {
-            valuePrice = 'middle';
-          }
-          return valuePrice === value;
-        });
-      }
-      return newAds;
-    };
-
-    var checkPrice = {
-      low: function (value) {
-        return value < PriceParams.LOW;
-      },
-      high: function (value) {
-        return value > PriceParams.HIGH;
-      },
-      middle: function (value) {
-        return value <= PriceParams.HIGH && value >= PriceParams.LOW;
-      }
-    };
-
-    filteredAds = filterPinsByPrice(filtersState.priceFilter);
+    filteredAds = filterPinsByType();
+    filteredAds = filterPinsByRooms();
+    filteredAds = filterPinsByGuests();
+    filteredAds = filterPinsByPrice();
+    filteredAds = filterPinsByFeatures();
 
     window.pin.showPins(filteredAds);
   };
 
-  typeFilter.addEventListener('change', function (evt) {
-    var value = evt.target.value;
-    filtersState.typeFilter = value;
-    initFilters(value);
-  });
+  var filterPinsByType = function () {
+    var value = filtersState['housing-type'];
+    if (value === 'any') {
+      newAds = initialAds;
+    } else {
+      newAds = filteredAds.filter(function (it) {
+        return it.offer.type === value;
+      });
+    }
+    return newAds;
+  };
 
-  roomsFilter.addEventListener('change', function (evt) {
-    var value = evt.target.value;
-    filtersState.roomsFilter = value;
-    initFilters(value);
-  });
+  var filterPinsByRooms = function () {
+    var value = filtersState['housing-rooms'];
+    if (value === 'any') {
+      newAds = filteredAds;
+    } else {
+      newAds = filteredAds.filter(function (it) {
+        return it.offer.rooms === +value;
+      });
+    }
+    return newAds;
+  };
 
-  guestsFilter.addEventListener('change', function (evt) {
-    var value = evt.target.value;
-    filtersState.guestsFilter = value;
-    initFilters(value);
-  });
+  var filterPinsByGuests = function () {
+    var value = filtersState['housing-guests'];
+    if (value === 'any') {
+      newAds = filteredAds;
+    } else {
+      newAds = filteredAds.filter(function (it) {
+        return it.offer.guests === +value;
+      });
+    }
+    return newAds;
+  };
 
-  priceFilter.addEventListener('change', function (evt) {
-    var value = evt.target.value;
-    filtersState.guestsFilter = value;
-    initFilters(value);
-  });
+  var filterPinsByPrice = function () {
+    var value = filtersState['housing-price'];
+    if (value === 'any') {
+      newAds = filteredAds;
+    } else {
+      newAds = filteredAds.filter(function (it) {
+        var valuePrice;
+        if (checkPrice.low(it.offer.price)) {
+          valuePrice = 'low';
+        }
+        if (checkPrice.high(it.offer.price)) {
+          valuePrice = 'high';
+        }
+        if (checkPrice.middle(it.offer.price)) {
+          valuePrice = 'middle';
+        }
+        return valuePrice === value;
+      });
+    }
+    return newAds;
+  };
 
-  /* var filterPinsByFeatures = function (value) {
-    newAds = filteredAds.filter(function (it) {
-      var pinsFeatures = it.offer.features;
-      return pinsFeatures.indexOf(value) !== -1;
-    });
-    window.pin.showPins(newAds);
-  }; */
+  var checkPrice = {
+    low: function (value) {
+      return value < PriceParams.LOW;
+    },
+    high: function (value) {
+      return value > PriceParams.HIGH;
+    },
+    middle: function (value) {
+      return value <= PriceParams.HIGH && value >= PriceParams.LOW;
+    }
+  };
+
+  var filterPinsByFeatures = function () {
+    var features = filtersState['features'];
+    if (features.length === 0) {
+      newAds = filteredAds;
+    } else {
+      newAds = filteredAds.filter(function (it) {
+        var filtered;
+        var pinsFeatures = it.offer.features;
+        features.forEach(function (item) {
+          var index = pinsFeatures.indexOf(item);
+          filtered = index !== -1;
+        });
+        return filtered;
+      });
+    }
+    return newAds;
+  };
 
   window.filters = {
     initFilters: initFilters
