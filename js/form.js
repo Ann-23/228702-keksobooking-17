@@ -37,6 +37,7 @@
   var disableForm = function () {
     adForm.classList.add('ad-form--disabled');
     window.util.disableFields(adFormFields);
+    window.photos.clearPhotoFields();
   };
 
   disableForm();

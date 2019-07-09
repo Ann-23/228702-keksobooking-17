@@ -36,6 +36,7 @@
 
   var closeCard = function () {
     window.card.remove();
+    document.removeEventListener('keydown', onEscPress);
   };
 
   var onEscPress = function (evt) {

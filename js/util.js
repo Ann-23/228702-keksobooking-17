@@ -2,6 +2,7 @@
 
 (function () {
   var ESC_KEYCODE = 27;
+  var DEBOUNCE_INTERVAL = 300; // ms
 
   var onEscPress = function (evt, callback) {
     if (evt.keyCode === ESC_KEYCODE) {
@@ -21,9 +22,24 @@
     });
   };
 
+  var reduceDebounce = function (cb) {
+    var lastTimeout = null;
+
+    return function () {
+      var parameters = arguments;
+      if (lastTimeout) {
+        window.clearTimeout(lastTimeout);
+      }
+      lastTimeout = window.setTimeout(function () {
+        cb.apply(null, parameters);
+      }, DEBOUNCE_INTERVAL);
+    };
+  };
+
   window.util = {
     onEscPress: onEscPress,
     disableFields: disableFields,
-    enableFields: enableFields
+    enableFields: enableFields,
+    reduceDebounce: reduceDebounce
   };
 })();

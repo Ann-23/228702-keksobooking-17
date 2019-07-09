@@ -20,11 +20,11 @@
     initialAds = ads;
     filteredAds = ads;
 
-    typeFilter.addEventListener('change', onFilterChange);
-    roomsFilter.addEventListener('change', onFilterChange);
-    guestsFilter.addEventListener('change', onFilterChange);
-    priceFilter.addEventListener('change', onFilterChange);
-    mapFeatures.addEventListener('change', onFilterChange);
+    typeFilter.addEventListener('change', window.util.reduceDebounce(onFilterChange));
+    roomsFilter.addEventListener('change', window.util.reduceDebounce(onFilterChange));
+    guestsFilter.addEventListener('change', window.util.reduceDebounce(onFilterChange));
+    priceFilter.addEventListener('change', window.util.reduceDebounce(onFilterChange));
+    mapFeatures.addEventListener('change', window.util.reduceDebounce(onFilterChange));
 
     window.pin.showPins(initialAds);
   };
@@ -51,6 +51,7 @@
       filtersState[name] = value;
     }
 
+    document.removeEventListener('change', window.util.reduceDebounce(onFilterChange));
     window.card.remove();
     filterAds();
   };
