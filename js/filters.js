@@ -51,7 +51,6 @@
       filtersState[name] = value;
     }
 
-    document.removeEventListener('change', window.util.reduceDebounce(onFilterChange));
     window.card.remove();
     filterAds();
   };
@@ -146,10 +145,13 @@
       newAds = filteredAds.filter(function (it) {
         var filtered;
         var pinsFeatures = it.offer.features;
-        features.forEach(function (item) {
-          var index = pinsFeatures.indexOf(item);
-          filtered = index !== -1;
-        });
+        for (var i = 0; i < features.length; i++) {
+          if (pinsFeatures.indexOf(features[i]) === -1) {
+            filtered = false;
+            break;
+          }
+          filtered = true;
+        }
         return filtered;
       });
     }
