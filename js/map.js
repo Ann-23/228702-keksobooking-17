@@ -10,12 +10,12 @@
 
   window.mainPin.initMainPin();
 
-  var successHandler = function (ads) {
+  var onSuccess = function (ads) {
     window.pin.showPins(ads);
     window.filters.initFilters(ads);
   };
 
-  var errorHandler = function (errorMessage) {
+  var onError = function (errorMessage) {
     window.modal.showModal(errorMessage);
   };
 
@@ -23,13 +23,16 @@
   var activateMap = function () {
     map.classList.remove('map--faded');
     window.util.enableFields(filtersFormSelects);
-    window.backend.load(successHandler, errorHandler);
+    window.backend.load(onSuccess, onError);
   };
 
   // функция вызова нективного состояния страницы
   var deactivateMap = function () {
     map.classList.add('map--faded');
+    filtersForm.reset();
     window.util.disableFields(filtersFormSelects);
+    window.filters.removeListeners();
+    window.form.removeOptionsListeners();
     window.pin.removeElements();
     window.mainPin.initMainPin();
   };

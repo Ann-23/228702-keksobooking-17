@@ -56,7 +56,7 @@
   };
 
   // логика активации и перемещений
-  mainPin.addEventListener('mousedown', function (evt) {
+  var onMainPinClick = function (evt) {
     evt.preventDefault();
 
     var startCoords = new StartCoords(evt.clientX, evt.clientY);
@@ -104,7 +104,9 @@
 
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
-  });
+  };
+
+  mainPin.addEventListener('mousedown', onMainPinClick);
 
   window.mainPin = {
     initMainPin: initMainPin

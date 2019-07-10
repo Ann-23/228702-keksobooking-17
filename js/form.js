@@ -36,8 +36,8 @@
   // функция блокировки полей форм
   var disableForm = function () {
     adForm.classList.add('ad-form--disabled');
-    window.util.disableFields(adFormFields);
     window.photos.clearPhotoFields();
+    window.util.disableFields(adFormFields);
   };
 
   disableForm();
@@ -54,22 +54,28 @@
     fieldPrice.placeholder = TypePrice[type];
   };
 
-  fieldType.addEventListener('change', function () {
+  var onTypeChange = function () {
     onFieldTypeChange(fieldType.value.toUpperCase());
-  });
+  };
+
+  fieldType.addEventListener('change', onTypeChange);
 
   // блок по синхронизации полей со временем заезда/выезда
   var onFieldTimeChange = function (field, value) {
     field.value = value;
   };
 
-  fieldTimeOut.addEventListener('change', function () {
-    onFieldTimeChange(fieldTimeIn, fieldTimeOut.value);
-  });
-
-  fieldTimeIn.addEventListener('change', function () {
+  var onTimeOutChange = function () {
     onFieldTimeChange(fieldTimeOut, fieldTimeIn.value);
-  });
+  };
+
+  var onTimeInChange = function () {
+    onFieldTimeChange(fieldTimeOut, fieldTimeIn.value);
+  };
+
+  fieldTimeOut.addEventListener('change', onTimeOutChange);
+
+  fieldTimeIn.addEventListener('change', onTimeInChange);
 
   // синхронизация полей количества комнат и гостей
   var onFieldRoomsChange = function (value) {
@@ -91,10 +97,12 @@
     });
   };
 
-  fieldRooms.addEventListener('change', function () {
+  var onRoomsGuestsChange = function () {
     onFieldRoomsChange(fieldRooms.value);
     onFieldGuestsValidity(fieldRooms.value);
-  });
+  };
+
+  fieldRooms.addEventListener('change', onRoomsGuestsChange);
 
   var onSuccess = function () {
     window.page.deactivate();
@@ -105,24 +113,36 @@
     window.modal.showModal(errorMessage);
   };
 
-  adForm.addEventListener('submit', function (evt) {
+  var onSubmit = function (evt) {
     evt.preventDefault();
     window.backend.upload(new FormData(adForm), onSuccess, onError);
-  });
+  };
+
+  adForm.addEventListener('submit', onSubmit);
+
+  resetButton.addEventListener('click', window.page.deactivate);
+
+  var removeOptionsListeners = function () {
+    fieldType.removeEventListener('change', onTypeChange);
+    fieldTimeOut.removeEventListener('change', onTimeOutChange);
+    fieldTimeIn.removeEventListener('change', onTimeInChange);
+    fieldRooms.removeEventListener('change', onRoomsGuestsChange);
+    adForm.removeEventListener('submit', onSubmit);
+    resetButton.removeEventListener('click', window.page.deactivate);
+  };
 
   // сброс по кнопке "резет"
   var resetForm = function () {
     disableForm();
     adForm.reset();
+    adForm.removeEventListener('submit', onSubmit);
+    resetButton.removeEventListener('click', window.page.deactivate);
   };
-
-  resetButton.addEventListener('click', function () {
-    window.page.deactivate();
-  });
 
   window.form = {
     setAddress: setAddress,
     init: enableForm,
-    reset: resetForm
+    reset: resetForm,
+    removeOptionsListeners: removeOptionsListeners
   };
 })();
