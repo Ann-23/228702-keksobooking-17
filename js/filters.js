@@ -20,11 +20,11 @@
     initialAds = ads;
     filteredAds = ads;
 
-    typeFilter.addEventListener('change', window.util.reduceDebounce(onFilterChange));
-    roomsFilter.addEventListener('change', window.util.reduceDebounce(onFilterChange));
-    guestsFilter.addEventListener('change', window.util.reduceDebounce(onFilterChange));
-    priceFilter.addEventListener('change', window.util.reduceDebounce(onFilterChange));
-    mapFeatures.addEventListener('change', window.util.reduceDebounce(onFilterChange));
+    typeFilter.addEventListener('change', addCheckDebounce);
+    roomsFilter.addEventListener('change', addCheckDebounce);
+    guestsFilter.addEventListener('change', addCheckDebounce);
+    priceFilter.addEventListener('change', addCheckDebounce);
+    mapFeatures.addEventListener('change', addCheckDebounce);
 
     window.pin.showPins(initialAds);
   };
@@ -44,9 +44,9 @@
     if (name === 'features') {
       var checkboxes = mapFeatures.querySelectorAll('input[type=checkbox]:checked');
       filtersState[name] = [];
-      for (var i = 0; i < checkboxes.length; i++) {
-        filtersState[name].push(checkboxes[i].value);
-      }
+      checkboxes.forEach(function (it) {
+        filtersState[name].push(it.value);
+      });
     } else {
       filtersState[name] = value;
     }
@@ -54,6 +54,8 @@
     window.card.remove();
     filterAds();
   };
+
+  var addCheckDebounce = window.util.reduceDebounce(onFilterChange);
 
   var filterAds = function () {
     filteredAds = initialAds;
@@ -158,7 +160,16 @@
     return newAds;
   };
 
+  var removeListeners = function () {
+    typeFilter.removeEventListener('change', addCheckDebounce);
+    roomsFilter.removeEventListener('change', addCheckDebounce);
+    guestsFilter.removeEventListener('change', addCheckDebounce);
+    priceFilter.removeEventListener('change', addCheckDebounce);
+    mapFeatures.removeEventListener('change', addCheckDebounce);
+  };
+
   window.filters = {
-    initFilters: initFilters
+    initFilters: initFilters,
+    removeListeners: removeListeners
   };
 })();
