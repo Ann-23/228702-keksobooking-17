@@ -106,6 +106,13 @@
     document.addEventListener('mouseup', onMouseUp);
   });
 
+  var onEnterPress = function (evt) {
+    window.util.onEnterPress(evt, window.page.activate);
+    mainPin.removeEventListener('keydown', onEnterPress);
+  };
+
+  mainPin.addEventListener('keydown', onEnterPress);
+
   window.mainPin = {
     initMainPin: initMainPin
   };

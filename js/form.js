@@ -84,11 +84,6 @@
     if (availableOptions.indexOf(fieldGuests.value) === -1) {
       fieldGuests.setCustomValidity('Укажите другое количество гостей');
     }
-    fieldGuests.addEventListener('change', function () {
-      if (availableOptions.indexOf(fieldGuests.value) !== -1) {
-        fieldGuests.setCustomValidity('');
-      }
-    });
   };
 
   fieldRooms.addEventListener('change', function () {
