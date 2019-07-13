@@ -17,28 +17,28 @@
   // функция создания фрагмента фич для объявления
   var createFeaturesFragment = function (features) {
     var fragment = document.createDocumentFragment();
-    for (var i = 0; i < features.length; i++) {
+    features.forEach(function (it) {
       var featureElement = document.createElement('li');
       featureElement.classList.add('popup__feature');
-      var dopClass = 'popup__feature--' + features[i];
+      var dopClass = 'popup__feature--' + it;
       featureElement.classList.add(dopClass);
       fragment.appendChild(featureElement);
-    }
+    });
     return fragment;
   };
 
   // функция создания фрагмента фото для объявления
   var createPhotosFragment = function (photos) {
     var fragment = document.createDocumentFragment();
-    for (var i = 0; i < photos.length; i++) {
+    photos.forEach(function (it) {
       var photoElement = document.createElement('img');
       photoElement.classList.add('popup__photo');
-      photoElement.src = photos[i];
+      photoElement.src = it;
       photoElement.width = '45';
       photoElement.height = '40';
       photoElement.alt = 'Фотография жилья';
       fragment.appendChild(photoElement);
-    }
+    });
     return fragment;
   };
 
@@ -109,7 +109,7 @@
 
   var onCloseButtonClick = function () {
     removeCard();
-    window.pin.deactivate();
+    window.pins.deactivate();
   };
 
   window.card = {

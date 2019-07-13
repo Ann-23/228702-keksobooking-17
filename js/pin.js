@@ -1,83 +1,119 @@
 'use strict';
 
 (function () {
-
-  var PinParams = {
-    WIDTH: 50,
-    HEIGHT: 70
+  var MainPinParams = {
+    WIDTH: 65,
+    HEIGHT: 81,
+    START_HEIGHT: 65
   };
 
-  var ADS_LIMIT = 5;
-
-  var similarPins = document.querySelector('.map__pins');
-
-  var similarPinTemplate = document.querySelector('#pin')
-      .content
-      .querySelector('.map__pin');
-
-  var pins = [];
-
-  // функция вставки шаблона метки
-  var renderPin = function (ad) {
-    var pinElement = similarPinTemplate.cloneNode(true);
-    pinElement.style.left = ad.location.x - PinParams.WIDTH / 2 + 'px';
-    pinElement.style.top = ad.location.y - PinParams.HEIGHT + 'px';
-    pinElement.querySelector('img').src = ad.author.avatar;
-    pinElement.querySelector('img').alt = ad.offer.title;
-
-    pinListener(pinElement, ad);
-
-    return pinElement;
+  var XCoord = {
+    MIN: 0,
+    MAX: 1200
   };
 
-  // функция создания фрагмента для меток
-  var getPinElements = function (ads) {
-    var fragment = document.createDocumentFragment();
-    var amount = ads.length < ADS_LIMIT ? ads.length : ADS_LIMIT;
-    for (var i = 0; i < amount; i++) {
-      if ('offer' in ads[i]) {
-        var pin = renderPin(ads[i]);
-        pins.push(pin);
-        fragment.appendChild(pin);
+  var YCoord = {
+    MIN: 130,
+    MAX: 630
+  };
+
+  var xCoordRange = {
+    min: 0,
+    max: XCoord.MAX - MainPinParams.WIDTH
+  };
+
+  var yCoordRange = {
+    min: YCoord.MIN - MainPinParams.HEIGHT,
+    max: YCoord.MAX - MainPinParams.HEIGHT
+  };
+
+  var mainPin = document.querySelector('.map__pin--main');
+
+  // функция получения координат главного пина
+  var getMainPinCoords = function () {
+    return {
+      x: +mainPin.style.left.split('px')[0],
+      y: +mainPin.style.top.split('px')[0]
+    };
+  };
+
+  var pinInitCoord = getMainPinCoords();
+
+  // исходные координаты в поле адреса
+  window.form.address(pinInitCoord.x + MainPinParams.WIDTH / 2, pinInitCoord.y + MainPinParams.START_HEIGHT / 2);
+
+  var initMainPin = function () {
+    mainPin.style.left = pinInitCoord.x + 'px';
+    mainPin.style.top = pinInitCoord.y + 'px';
+
+    window.form.address(pinInitCoord.x + MainPinParams.WIDTH / 2, pinInitCoord.y + MainPinParams.START_HEIGHT / 2);
+  };
+
+  // функция-конструктор координат отсчёта
+  var StartCoords = function (x, y) {
+    this.x = x;
+    this.y = y;
+  };
+
+  // логика активации и перемещений
+  mainPin.addEventListener('mousedown', function (evt) {
+    evt.preventDefault();
+
+    var startCoords = new StartCoords(evt.clientX, evt.clientY);
+
+    var onMouseMove = function (moveEvt) {
+      moveEvt.preventDefault();
+
+      var shift = {
+        x: startCoords.x - moveEvt.clientX,
+        y: startCoords.y - moveEvt.clientY
+      };
+
+      startCoords = new StartCoords(moveEvt.clientX, moveEvt.clientY);
+
+      var xNew = mainPin.offsetLeft - shift.x;
+      var yNew = mainPin.offsetTop - shift.y;
+
+      if (xNew < xCoordRange.min) {
+        xNew = xCoordRange.min;
       }
-    }
-    return fragment;
+      if (xNew > xCoordRange.max) {
+        xNew = xCoordRange.max;
+      }
+      mainPin.style.left = xNew + 'px';
+
+      if (yNew < yCoordRange.min) {
+        yNew = yCoordRange.min;
+      }
+      if (yNew > yCoordRange.max) {
+        yNew = yCoordRange.max;
+      }
+      mainPin.style.top = yNew + 'px';
+
+      window.form.address(xNew + MainPinParams.WIDTH / 2, yNew + MainPinParams.HEIGHT);
+    };
+
+    var onMouseUp = function (upEvt) {
+      upEvt.preventDefault();
+
+      window.page.activate();
+
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    };
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  });
+
+  var onEnterPress = function (evt) {
+    window.util.onEnterPress(evt, window.page.activate);
+    mainPin.removeEventListener('keydown', onEnterPress);
   };
 
-  // функция удаления пинов
-  var removePinElements = function () {
-    pins.forEach(function (pin) {
-      pin.remove();
-    });
-    pins = [];
-  };
-
-  var showPins = function (ads) {
-    removePinElements();
-    similarPins.appendChild(getPinElements(ads));
-  };
-
-  // функция снятия класса активного пина
-  var deactivatePin = function () {
-    var pinActive = document.querySelector('.map__pin--active');
-    if (pinActive) {
-      pinActive.classList.remove('map__pin--active');
-    }
-  };
-
-  // функция переключения карточек
-  var pinListener = function (element, ad) {
-    element.addEventListener('click', function () {
-      window.card.remove();
-      deactivatePin();
-      element.classList.add('map__pin--active');
-      window.map.showCard(ad);
-    });
-  };
+  mainPin.addEventListener('keydown', onEnterPress);
 
   window.pin = {
-    showPins: showPins,
-    removeElements: removePinElements,
-    deactivate: deactivatePin
+    init: initMainPin
   };
 })();

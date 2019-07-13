@@ -37,7 +37,8 @@
   var disableForm = function () {
     adForm.classList.add('ad-form--disabled');
     window.util.disableFields(adFormFields);
-    window.photos.clearPhotoFields();
+    window.files.clear();
+    fieldPrice.placeholder = TypePrice[fieldType.value.toUpperCase()];
   };
 
   disableForm();
@@ -100,12 +101,13 @@
   fieldGuests.addEventListener('change', onFieldGuestsChange);
 
   var onSuccess = function () {
+    window.card.remove();
     window.page.deactivate();
-    window.modal.showModal();
+    window.popup.show();
   };
 
   var onError = function (errorMessage) {
-    window.modal.showModal(errorMessage);
+    window.popup.show(errorMessage);
   };
 
   adForm.addEventListener('submit', function (evt) {
@@ -115,6 +117,7 @@
 
   // сброс по кнопке "резет"
   var resetForm = function () {
+    window.card.remove();
     disableForm();
     adForm.reset();
   };
@@ -124,7 +127,7 @@
   });
 
   window.form = {
-    setAddress: setAddress,
+    address: setAddress,
     init: enableForm,
     reset: resetForm
   };

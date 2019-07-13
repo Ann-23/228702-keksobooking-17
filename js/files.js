@@ -107,7 +107,7 @@
     }
   };
 
-  window.photos = {
-    clearPhotoFields: clearPhotoFields
+  window.files = {
+    clear: clearPhotoFields
   };
 })();

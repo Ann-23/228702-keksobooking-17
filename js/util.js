@@ -3,7 +3,7 @@
 (function () {
   var ESC_KEYCODE = 27;
   var ENTER_KEYCODE = 13;
-  var DEBOUNCE_INTERVAL = 300; // ms
+  var DEBOUNCE_INTERVAL = 500; // ms
 
   var onEscPress = function (evt, callback) {
     if (evt.keyCode === ESC_KEYCODE) {

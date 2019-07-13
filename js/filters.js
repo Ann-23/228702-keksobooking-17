@@ -26,7 +26,7 @@
     priceFilter.addEventListener('change', window.util.reduceDebounce(onFilterChange));
     mapFeatures.addEventListener('change', window.util.reduceDebounce(onFilterChange));
 
-    window.pin.showPins(initialAds);
+    window.pins.show(initialAds);
   };
 
   var filtersState = {
@@ -64,7 +64,7 @@
     filteredAds = filterPinsByPrice();
     filteredAds = filterPinsByFeatures();
 
-    window.pin.showPins(filteredAds);
+    window.pins.show(filteredAds);
   };
 
   var filterPinsByType = function () {
@@ -159,6 +159,6 @@
   };
 
   window.filters = {
-    initFilters: initFilters
+    init: initFilters
   };
 })();
