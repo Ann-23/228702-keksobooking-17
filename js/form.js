@@ -58,7 +58,7 @@
     onFieldTypeChange(fieldType.value.toUpperCase());
   });
 
-  // блок по синхронизации полей со временем заезда/выезда
+  // синхронизация полей со временем заезда/выезда
   var onFieldTimeChange = function (field, value) {
     field.value = value;
   };
@@ -72,24 +72,32 @@
   });
 
   // синхронизация полей количества комнат и гостей
-  var onFieldRoomsChange = function (value) {
+  var setGuestsValidity = function (options) {
+    var message = '';
+
+    if (options.indexOf(fieldGuests.value) === -1) {
+      message = 'Укажите другое количество гостей';
+    }
+    fieldGuests.setCustomValidity(message);
+  };
+
+  var onFieldRoomsChange = function (evt) {
+    var value = evt.target.value;
     var availableOptions = GuestsByRoom[value];
     optionsGuests.forEach(function (option) {
       option.disabled = availableOptions.indexOf(option.value) === -1;
     });
+    setGuestsValidity(availableOptions, value);
   };
 
-  var onFieldGuestsValidity = function (value) {
-    var availableOptions = GuestsByRoom[value];
-    if (availableOptions.indexOf(fieldGuests.value) === -1) {
-      fieldGuests.setCustomValidity('Укажите другое количество гостей');
-    }
+  var onFieldGuestsChange = function (evt) {
+    var value = evt.target.value;
+    var availableOptions = GuestsByRoom[fieldRooms.value];
+    setGuestsValidity(availableOptions, value);
   };
 
-  fieldRooms.addEventListener('change', function () {
-    onFieldRoomsChange(fieldRooms.value);
-    onFieldGuestsValidity(fieldRooms.value);
-  });
+  fieldRooms.addEventListener('change', onFieldRoomsChange);
+  fieldGuests.addEventListener('change', onFieldGuestsChange);
 
   var onSuccess = function () {
     window.page.deactivate();
