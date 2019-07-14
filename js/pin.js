@@ -29,6 +29,8 @@
 
   var mainPin = document.querySelector('.map__pin--main');
 
+  var isCursorMove = false;
+
   // функция получения координат главного пина
   var getMainPinCoords = function () {
     return {
@@ -64,6 +66,8 @@
     var onMouseMove = function (moveEvt) {
       moveEvt.preventDefault();
 
+      isCursorMove = true;
+
       var shift = {
         x: startCoords.x - moveEvt.clientX,
         y: startCoords.y - moveEvt.clientY
@@ -95,6 +99,10 @@
 
     var onMouseUp = function (upEvt) {
       upEvt.preventDefault();
+
+      if (isCursorMove === false) {
+        window.form.address(pinInitCoord.x + MainPinParams.WIDTH / 2, pinInitCoord.y + MainPinParams.HEIGHT);
+      }
 
       window.page.activate();
 

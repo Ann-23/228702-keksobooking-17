@@ -38,6 +38,7 @@
     adForm.classList.add('ad-form--disabled');
     window.util.disableFields(adFormFields);
     window.files.clear();
+    window.files.uninit();
     fieldPrice.placeholder = TypePrice[fieldType.value.toUpperCase()];
   };
 
@@ -47,6 +48,7 @@
   var enableForm = function () {
     adForm.classList.remove('ad-form--disabled');
     window.util.enableFields(adFormFields);
+    window.files.init();
   };
 
   // синхронизация полей тип жилья/стоимость
