@@ -20,8 +20,8 @@
     features.forEach(function (it) {
       var featureElement = document.createElement('li');
       featureElement.classList.add('popup__feature');
-      var dopClass = 'popup__feature--' + it;
-      featureElement.classList.add(dopClass);
+      var featureClass = 'popup__feature--' + it;
+      featureElement.classList.add(featureClass);
       fragment.appendChild(featureElement);
     });
     return fragment;

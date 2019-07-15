@@ -114,12 +114,12 @@
     document.addEventListener('mouseup', onMouseUp);
   });
 
-  var onEnterPress = function (evt) {
+  var onMainPinEnter = function (evt) {
     window.util.onEnterPress(evt, window.page.activate);
-    mainPin.removeEventListener('keydown', onEnterPress);
+    mainPin.removeEventListener('keydown', onMainPinEnter);
   };
 
-  mainPin.addEventListener('keydown', onEnterPress);
+  mainPin.addEventListener('keydown', onMainPinEnter);
 
   window.pin = {
     init: initMainPin

@@ -11,6 +11,7 @@
   var filteredAds;
   var mapFilters = document.querySelector('.map__filters');
   var mapFeatures = document.querySelector('.map__features');
+  var allCheckboxes = document.querySelectorAll('input[type=checkbox]');
 
   var initFilters = function (ads) {
     initialAds = ads;
@@ -126,6 +127,27 @@
       return filtered;
     });
   };
+
+  /* var setChecked = function (it) {
+    it.checked = (!it.checked) ? it.checked = true : it.checked = false;
+  };
+
+  // как вот сюда передать it?
+  var onCheckboxEnter = function (evt) {
+    window.util.onEnterPress(evt, setChecked);
+  }; */
+
+  var onCheckboxEnter = function (it) {
+    it.addEventListener('keydown', function (evt) {
+      if (evt.keyCode === 13) {
+        it.checked = (!it.checked) ? it.checked = true : it.checked = false;
+      }
+    });
+  };
+
+  allCheckboxes.forEach(function (it) {
+    onCheckboxEnter(it);
+  });
 
   window.filters = {
     init: initFilters
