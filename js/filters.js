@@ -134,12 +134,14 @@
 
   // как вот сюда передать it?
   var onCheckboxEnter = function (evt) {
+    evt.preventDefault();
     window.util.onEnterPress(evt, setChecked);
   }; */
 
   var onCheckboxEnter = function (it) {
     it.addEventListener('keydown', function (evt) {
       if (evt.keyCode === 13) {
+        evt.preventDefault();
         it.checked = (!it.checked) ? it.checked = true : it.checked = false;
       }
     });
