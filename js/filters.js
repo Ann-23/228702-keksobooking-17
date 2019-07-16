@@ -11,7 +11,6 @@
   var filteredAds;
   var mapFilters = document.querySelector('.map__filters');
   var mapFeatures = document.querySelector('.map__features');
-  var allCheckboxes = document.querySelectorAll('input[type=checkbox]');
 
   var initFilters = function (ads) {
     initialAds = ads;
@@ -45,42 +44,38 @@
     }
 
     window.card.remove();
-    filterAds(name);
+    filterAds();
   };
 
-  var filterAds = function (name) {
+  var filterAds = function () {
     filteredAds = initialAds;
 
-    filteredAds = filterByTypeRoomsGuests(name);
+    filteredAds = filterBySelect('housing-type');
+    filteredAds = filterBySelect('housing-rooms');
+    filteredAds = filterBySelect('housing-guests');
     filteredAds = filterPinsByPrice();
     filteredAds = filterPinsByFeatures();
 
     window.pins.show(filteredAds);
   };
 
-  var filterByTypeRoomsGuests = function (name) {
-    var value = filtersState[name];
+  var filterBySelect = function (stateName) {
+    var name = stateName.replace('housing-', '');
+
+    var value = filtersState[stateName];
     if (value === 'any') {
-      return initialAds;
-    }
-    return filteredAds.filter(function (it) {
-      if (name === 'housing-type') {
-        return it.offer.type.toString() === value;
-      }
-      if (name === 'housing-rooms') {
-        return it.offer.rooms.toString() === value;
-      }
-      if (name === 'housing-guests') {
-        return it.offer.guests.toString() === value;
-      }
       return filteredAds;
-    });
+    } else {
+      return filteredAds.filter(function (it) {
+        return it.offer[name].toString() === value;
+      });
+    }
   };
 
   var filterPinsByPrice = function () {
     var value = filtersState['housing-price'];
     if (value === 'any') {
-      return initialAds;
+      return filteredAds;
     }
     return filteredAds.filter(function (it) {
       var valuePrice;
@@ -112,7 +107,7 @@
   var filterPinsByFeatures = function () {
     var features = filtersState['features'];
     if (features.length === 0) {
-      return initialAds;
+      return filteredAds;
     }
     return filteredAds.filter(function (it) {
       var filtered;
@@ -127,29 +122,6 @@
       return filtered;
     });
   };
-
-  /* var setChecked = function (it) {
-    it.checked = (!it.checked) ? it.checked = true : it.checked = false;
-  };
-
-  // как вот сюда передать it?
-  var onCheckboxEnter = function (evt) {
-    evt.preventDefault();
-    window.util.onEnterPress(evt, setChecked);
-  }; */
-
-  var onCheckboxEnter = function (it) {
-    it.addEventListener('keydown', function (evt) {
-      if (evt.keyCode === 13) {
-        evt.preventDefault();
-        it.checked = (!it.checked) ? it.checked = true : it.checked = false;
-      }
-    });
-  };
-
-  allCheckboxes.forEach(function (it) {
-    onCheckboxEnter(it);
-  });
 
   window.filters = {
     init: initFilters
