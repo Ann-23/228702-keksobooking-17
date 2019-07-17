@@ -7,35 +7,37 @@
   var filtersContainer = document.querySelector('.map__filters-container');
   var filtersForm = filtersContainer.querySelector('.map__filters');
   var filtersFormSelects = filtersForm.querySelectorAll('select');
+  var filtersFormInputs = filtersForm.querySelectorAll('input');
 
-  window.mainPin.initMainPin();
+  window.pin.init();
 
-  var onSuccess = function (ads) {
-    window.pin.showPins(ads);
-    window.filters.initFilters(ads);
+  var successHandler = function (ads) {
+    window.pins.show(ads);
+    window.filters.init(ads);
   };
 
-  var onError = function (errorMessage) {
-    window.modal.showModal(errorMessage);
+  var errorHandler = function (errorMessage) {
+    window.popup.show(errorMessage);
   };
 
   // функция вызова активго состояния страницы
   var activateMap = function () {
     map.classList.remove('map--faded');
+    window.backend.load(successHandler, errorHandler);
     window.util.enableFields(filtersFormSelects);
-    window.backend.load(onSuccess, onError);
+    window.util.enableFields(filtersFormInputs);
   };
 
   // функция вызова нективного состояния страницы
   var deactivateMap = function () {
     map.classList.add('map--faded');
-    filtersForm.reset();
     window.util.disableFields(filtersFormSelects);
-    window.filters.removeListeners();
-    window.form.removeOptionsListeners();
-    window.pin.removeElements();
-    window.mainPin.initMainPin();
+    window.util.disableFields(filtersFormInputs);
+    window.pins.remove();
+    window.pin.init();
   };
+
+  deactivateMap();
 
   var closeCard = function () {
     window.card.remove();
@@ -55,6 +57,6 @@
   window.map = {
     activate: activateMap,
     deactivate: deactivateMap,
-    showCard: showCard
+    show: showCard
   };
 })();

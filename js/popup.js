@@ -37,7 +37,7 @@
     document.addEventListener('click', closeModal);
   };
 
-  window.modal = {
-    showModal: showModal
+  window.popup = {
+    show: showModal
   };
 })();

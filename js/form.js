@@ -36,8 +36,10 @@
   // функция блокировки полей форм
   var disableForm = function () {
     adForm.classList.add('ad-form--disabled');
-    window.photos.clearPhotoFields();
     window.util.disableFields(adFormFields);
+    window.files.clear();
+    window.files.uninit();
+    fieldPrice.placeholder = TypePrice[fieldType.value.toUpperCase()];
   };
 
   disableForm();
@@ -46,6 +48,7 @@
   var enableForm = function () {
     adForm.classList.remove('ad-form--disabled');
     window.util.enableFields(adFormFields);
+    window.files.init();
   };
 
   // синхронизация полей тип жилья/стоимость
@@ -54,95 +57,80 @@
     fieldPrice.placeholder = TypePrice[type];
   };
 
-  var onTypeChange = function () {
+  fieldType.addEventListener('change', function () {
     onFieldTypeChange(fieldType.value.toUpperCase());
-  };
+  });
 
-  fieldType.addEventListener('change', onTypeChange);
-
-  // блок по синхронизации полей со временем заезда/выезда
+  // синхронизация полей со временем заезда/выезда
   var onFieldTimeChange = function (field, value) {
     field.value = value;
   };
 
-  var onTimeOutChange = function () {
+  fieldTimeOut.addEventListener('change', function () {
+    onFieldTimeChange(fieldTimeIn, fieldTimeOut.value);
+  });
+
+  fieldTimeIn.addEventListener('change', function () {
     onFieldTimeChange(fieldTimeOut, fieldTimeIn.value);
-  };
-
-  var onTimeInChange = function () {
-    onFieldTimeChange(fieldTimeOut, fieldTimeIn.value);
-  };
-
-  fieldTimeOut.addEventListener('change', onTimeOutChange);
-
-  fieldTimeIn.addEventListener('change', onTimeInChange);
+  });
 
   // синхронизация полей количества комнат и гостей
-  var onFieldRoomsChange = function (value) {
+  var setGuestsValidity = function (options) {
+    var message = '';
+
+    if (options.indexOf(fieldGuests.value) === -1) {
+      message = 'Укажите другое количество гостей';
+    }
+    fieldGuests.setCustomValidity(message);
+  };
+
+  var onFieldRoomsChange = function (evt) {
+    var value = evt.target.value;
     var availableOptions = GuestsByRoom[value];
     optionsGuests.forEach(function (option) {
       option.disabled = availableOptions.indexOf(option.value) === -1;
     });
+    setGuestsValidity(availableOptions, value);
   };
 
-  var onFieldGuestsValidity = function (value) {
-    var availableOptions = GuestsByRoom[value];
-    if (availableOptions.indexOf(fieldGuests.value) === -1) {
-      fieldGuests.setCustomValidity('Укажите другое количество гостей');
-    }
-    fieldGuests.addEventListener('change', function () {
-      if (availableOptions.indexOf(fieldGuests.value) !== -1) {
-        fieldGuests.setCustomValidity('');
-      }
-    });
+  var onFieldGuestsChange = function (evt) {
+    var value = evt.target.value;
+    var availableOptions = GuestsByRoom[fieldRooms.value];
+    setGuestsValidity(availableOptions, value);
   };
 
-  var onRoomsGuestsChange = function () {
-    onFieldRoomsChange(fieldRooms.value);
-    onFieldGuestsValidity(fieldRooms.value);
-  };
-
-  fieldRooms.addEventListener('change', onRoomsGuestsChange);
+  fieldRooms.addEventListener('change', onFieldRoomsChange);
+  fieldGuests.addEventListener('change', onFieldGuestsChange);
 
   var onSuccess = function () {
+    window.card.remove();
     window.page.deactivate();
-    window.modal.showModal();
+    window.popup.show();
   };
 
   var onError = function (errorMessage) {
-    window.modal.showModal(errorMessage);
+    window.popup.show(errorMessage);
   };
 
-  var onSubmit = function (evt) {
+  adForm.addEventListener('submit', function (evt) {
     evt.preventDefault();
     window.backend.upload(new FormData(adForm), onSuccess, onError);
-  };
-
-  adForm.addEventListener('submit', onSubmit);
-
-  resetButton.addEventListener('click', window.page.deactivate);
-
-  var removeOptionsListeners = function () {
-    fieldType.removeEventListener('change', onTypeChange);
-    fieldTimeOut.removeEventListener('change', onTimeOutChange);
-    fieldTimeIn.removeEventListener('change', onTimeInChange);
-    fieldRooms.removeEventListener('change', onRoomsGuestsChange);
-    adForm.removeEventListener('submit', onSubmit);
-    resetButton.removeEventListener('click', window.page.deactivate);
-  };
+  });
 
   // сброс по кнопке "резет"
   var resetForm = function () {
+    window.card.remove();
     disableForm();
     adForm.reset();
-    adForm.removeEventListener('submit', onSubmit);
-    resetButton.removeEventListener('click', window.page.deactivate);
   };
 
+  resetButton.addEventListener('click', function () {
+    window.page.deactivate();
+  });
+
   window.form = {
-    setAddress: setAddress,
+    address: setAddress,
     init: enableForm,
-    reset: resetForm,
-    removeOptionsListeners: removeOptionsListeners
+    reset: resetForm
   };
 })();

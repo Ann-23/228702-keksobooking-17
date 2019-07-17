@@ -9,24 +9,16 @@
 
   var initialAds;
   var filteredAds;
-  var newAds;
-  var typeFilter = document.querySelector('#housing-type');
-  var roomsFilter = document.querySelector('#housing-rooms');
-  var guestsFilter = document.querySelector('#housing-guests');
-  var priceFilter = document.querySelector('#housing-price');
+  var mapFilters = document.querySelector('.map__filters');
   var mapFeatures = document.querySelector('.map__features');
 
   var initFilters = function (ads) {
     initialAds = ads;
     filteredAds = ads;
 
-    typeFilter.addEventListener('change', addCheckDebounce);
-    roomsFilter.addEventListener('change', addCheckDebounce);
-    guestsFilter.addEventListener('change', addCheckDebounce);
-    priceFilter.addEventListener('change', addCheckDebounce);
-    mapFeatures.addEventListener('change', addCheckDebounce);
+    mapFilters.addEventListener('change', window.util.reduceDebounce(onFilterChange));
 
-    window.pin.showPins(initialAds);
+    window.pins.show(initialAds);
   };
 
   var filtersState = {
@@ -55,76 +47,49 @@
     filterAds();
   };
 
-  var addCheckDebounce = window.util.reduceDebounce(onFilterChange);
-
   var filterAds = function () {
     filteredAds = initialAds;
 
-    filteredAds = filterPinsByType();
-    filteredAds = filterPinsByRooms();
-    filteredAds = filterPinsByGuests();
+    filteredAds = filterBySelect('housing-type');
+    filteredAds = filterBySelect('housing-rooms');
+    filteredAds = filterBySelect('housing-guests');
     filteredAds = filterPinsByPrice();
     filteredAds = filterPinsByFeatures();
 
-    window.pin.showPins(filteredAds);
+    window.pins.show(filteredAds);
   };
 
-  var filterPinsByType = function () {
-    var value = filtersState['housing-type'];
-    if (value === 'any') {
-      newAds = initialAds;
-    } else {
-      newAds = filteredAds.filter(function (it) {
-        return it.offer.type === value;
-      });
-    }
-    return newAds;
-  };
+  var filterBySelect = function (stateName) {
+    var name = stateName.replace('housing-', '');
 
-  var filterPinsByRooms = function () {
-    var value = filtersState['housing-rooms'];
+    var value = filtersState[stateName];
     if (value === 'any') {
-      newAds = filteredAds;
+      return filteredAds;
     } else {
-      newAds = filteredAds.filter(function (it) {
-        return it.offer.rooms === +value;
+      return filteredAds.filter(function (it) {
+        return it.offer[name].toString() === value;
       });
     }
-    return newAds;
-  };
-
-  var filterPinsByGuests = function () {
-    var value = filtersState['housing-guests'];
-    if (value === 'any') {
-      newAds = filteredAds;
-    } else {
-      newAds = filteredAds.filter(function (it) {
-        return it.offer.guests === +value;
-      });
-    }
-    return newAds;
   };
 
   var filterPinsByPrice = function () {
     var value = filtersState['housing-price'];
     if (value === 'any') {
-      newAds = filteredAds;
-    } else {
-      newAds = filteredAds.filter(function (it) {
-        var valuePrice;
-        if (checkPrice.low(it.offer.price)) {
-          valuePrice = 'low';
-        }
-        if (checkPrice.high(it.offer.price)) {
-          valuePrice = 'high';
-        }
-        if (checkPrice.middle(it.offer.price)) {
-          valuePrice = 'middle';
-        }
-        return valuePrice === value;
-      });
+      return filteredAds;
     }
-    return newAds;
+    return filteredAds.filter(function (it) {
+      var valuePrice;
+      if (checkPrice.low(it.offer.price)) {
+        valuePrice = 'low';
+      }
+      if (checkPrice.high(it.offer.price)) {
+        valuePrice = 'high';
+      }
+      if (checkPrice.middle(it.offer.price)) {
+        valuePrice = 'middle';
+      }
+      return valuePrice === value;
+    });
   };
 
   var checkPrice = {
@@ -142,34 +107,23 @@
   var filterPinsByFeatures = function () {
     var features = filtersState['features'];
     if (features.length === 0) {
-      newAds = filteredAds;
-    } else {
-      newAds = filteredAds.filter(function (it) {
-        var filtered;
-        var pinsFeatures = it.offer.features;
-        for (var i = 0; i < features.length; i++) {
-          if (pinsFeatures.indexOf(features[i]) === -1) {
-            filtered = false;
-            break;
-          }
-          filtered = true;
-        }
-        return filtered;
-      });
+      return filteredAds;
     }
-    return newAds;
-  };
-
-  var removeListeners = function () {
-    typeFilter.removeEventListener('change', addCheckDebounce);
-    roomsFilter.removeEventListener('change', addCheckDebounce);
-    guestsFilter.removeEventListener('change', addCheckDebounce);
-    priceFilter.removeEventListener('change', addCheckDebounce);
-    mapFeatures.removeEventListener('change', addCheckDebounce);
+    return filteredAds.filter(function (it) {
+      var filtered;
+      var pinsFeatures = it.offer.features;
+      for (var i = 0; i < features.length; i++) {
+        if (pinsFeatures.indexOf(features[i]) === -1) {
+          filtered = false;
+          break;
+        }
+        filtered = true;
+      }
+      return filtered;
+    });
   };
 
   window.filters = {
-    initFilters: initFilters,
-    removeListeners: removeListeners
+    init: initFilters
   };
 })();

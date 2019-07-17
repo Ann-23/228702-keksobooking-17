@@ -20,8 +20,8 @@
     features.forEach(function (it) {
       var featureElement = document.createElement('li');
       featureElement.classList.add('popup__feature');
-      var dopClass = 'popup__feature--' + it;
-      featureElement.classList.add(dopClass);
+      var featureClass = 'popup__feature--' + it;
+      featureElement.classList.add(featureClass);
       fragment.appendChild(featureElement);
     });
     return fragment;
@@ -93,7 +93,9 @@
     checkEmptyValue(ad.offer.photos, cardPhotos);
 
     var buttonClose = cardElement.querySelector('button');
-    buttonClose.addEventListener('click', onCloseButtonClick);
+    buttonClose.addEventListener('click', function () {
+      onCloseButtonClick();
+    });
 
     return cardElement;
   };
@@ -107,7 +109,7 @@
 
   var onCloseButtonClick = function () {
     removeCard();
-    window.pin.deactivate();
+    window.pins.deactivate();
   };
 
   window.card = {
